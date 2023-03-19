@@ -23,6 +23,13 @@ void main_args(int argc, char* argv[], struct main_data* data) {
 */
 void create_dynamic_memory_buffers(struct main_data* data) {
 
+    data->client_pids = create_dynamic_memory;
+    data->intermediary_pids = create_dynamic_memory;
+    data->enterprise_pids = create_dynamic_memory;
+
+    data->client_stats = create_dynamic_memory;
+    data->intermediary_stats = create_dynamic_memory;
+    data->enterprise_pids = create_dynamic_memory;
 }
 
 /* Função que reserva a memória partilhada necessária para a execução do
