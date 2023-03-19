@@ -1,16 +1,33 @@
 #include <stdio.h>
 #include "memory.h"
+#include "main.h"
 
 /*
 * reads app args (max operations, shared buffer size, num of client + companies). keep in main_data
 */
-void main_args(int argc, char* argv[], struct main_data* data){}
+void main_args(int argc, char* argv[], struct main_data* data) {
+
+    data->max_ops = (int)argv[0];
+    data->buffers_size = (int)argv[1];
+    data->n_clients = (int)argv[2];
+    data->n_intermediaries = (int)argv[3];
+    data->n_enterprises = (int)argv[4];
+}
 
 /*
 * reserves dynamic memory for AdmPor, arrays *_pids + *_stats of main_data
 * can use create_dynamic_memory func
 */
-void create_dynamic_memory_buffers(struct main_data* data){}
+void create_dynamic_memory_buffers(struct main_data* data) {
+
+    data->client_pids = create_dynamic_memory;
+    data->intermediary_pids = create_dynamic_memory;
+    data->enterprise_pids = create_dynamic_memory;
+
+    data->client_stats = create_dynamic_memory;
+    data->intermediary_stats = create_dynamic_memory;
+    data->enterprise_pids = create_dynamic_memory;
+}
 
 /*
 * reserves the shared memory for AdmPor. reserve shared memory for all comm_buffers buffers,
