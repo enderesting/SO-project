@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 /*
 * reserves a shared memory zone with <size> & <name>. fill the zone with 0
@@ -12,7 +13,12 @@ void* create_shared_memory(char* name, int size){}
 * func that reserves a dynamic space of size. fill the zone with 0
 * return pointer
 */
-void* create_dynamic_memory(int size){}
+void* create_dynamic_memory(int size){
+    int *ptr = calloc(1, size);
+    if (ptr == NULL)
+        exit(1);
+    return ptr;
+}
 
 
 /* free the shared memory identified by args
@@ -22,7 +28,9 @@ void destroy_shared_memory(char* name, void* ptr, int size){}
 
 /* free the dynamic memory identified by args
 */
-void destroy_dynamic_memory(void* ptr){}
+void destroy_dynamic_memory(void* ptr){
+    free(ptr);
+}
 
 
 /*
