@@ -1,12 +1,37 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/mman.h>
+#include <fcntl.h>
+#include <sysstat.h>
 
 /*
 * reserves a shared memory zone with <size> & <name>. fill the zone with 0
 * return pointer. concatenate the result using func getuid()
 * to make the name unique to the process.
 */
-void* create_shared_memory(char* name, int size){}
+void* create_shared_memory(char* name, int size){
+    int *ptr;
+    int ret;
+    int fd = shm_open(name, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+    if (fd == -1){
+        perror(name);
+        exit(1);
+    }
+
+    ret = ftruncate(fd, size);
+    if (ret == -1){
+        perror(name);
+        exit(2);
+    }
+
+    ptr = mmap(0, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+    if (ptr == MAP_FAILED){
+        perror(name);
+        perror("-mmap");
+        exit(3);
+    }
+    return ptr;
+}
 
 
 /* 
@@ -23,7 +48,20 @@ void* create_dynamic_memory(int size){
 
 /* free the shared memory identified by args
 */
-void destroy_shared_memory(char* name, void* ptr, int size){}
+void destroy_shared_memory(char* name, void* ptr, int size){
+    int ret;
+    ret = munmap(ptr, size);
+    if (ret == -1){
+        perror(name);
+        exit(7);
+    }
+
+    ret = shm_unlink(name);
+    if (ret == -1){
+        perror(name);
+        exit(8);
+    }
+}
 
 
 /* free the dynamic memory identified by args
