@@ -1,8 +1,13 @@
+/*
+ * Emily Sá          fc58200
+ * Yichen Cao "Mimi" fc58165
+ * Gonçalo Fernandes fc58194
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/mman.h>
 #include <fcntl.h>
-#include <sysstat.h>
+#include <sys/stat.h>
 
 /*
 * reserves a shared memory zone with <size> & <name>. fill the zone with 0
@@ -18,7 +23,7 @@ void* create_shared_memory(char* name, int size){
         exit(1);
     }
 
-    ret = ftruncate(fd, size);
+    ret = ftruncate(fd, size); //size is total size
     if (ret == -1){
         perror(name);
         exit(2);

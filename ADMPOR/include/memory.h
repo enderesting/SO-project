@@ -51,7 +51,7 @@ struct comm_buffers {
 };
 
 
-/* Função que reserva uma zona de memória partilhada com tamanho indicado
+/* Função que reserva uma zona de memória partilha com tamanho indicado
 * por size e nome name, preenche essa zona de memória com o valor 0, e 
 * retorna um apontador para a mesma. Pode concatenar o resultado da função
 * getuid() a name, para tornar o nome único para o processo.
