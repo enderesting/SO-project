@@ -2,12 +2,25 @@
 #include "memory.h"
 #include "main.h"
 
-int main(int argc, char *argv[]){
-    struct main_data* mainData;
-    struct comm_buffers* commBuffers;
-    main_args(argc, argv, mainData);
-    create_dynamic_memory_buffers(mainData);
-    create_shared_memory_buffers(mainData,commBuffers);
+int main(int argc, char *argv[]) {
+    //init data structures
+    struct main_data* data = create_dynamic_memory(sizeof(struct main_data));
+    struct comm_buffers* buffers = create_dynamic_memory(sizeof(struct comm_buffers));
+    buffers->main_client = create_dynamic_memory(sizeof(struct rnd_access_buffer));
+    buffers->client_interm = create_dynamic_memory(sizeof(struct circular_buffer));
+    buffers->interm_enterp = create_dynamic_memory(sizeof(struct rnd_access_buffer));
+    //execute main code
+    main_args(argc, argv, data);
+    create_dynamic_memory_buffers(data);
+    create_shared_memory_buffers(data, buffers);
+    launch_processes(buffers, data);
+    user_interaction(buffers, data);
+    //release memory before terminating
+    destroy_dynamic_memory(data);
+    destroy_dynamic_memory(buffers->main_client);
+    destroy_dynamic_memory(buffers->client_interm);
+    destroy_dynamic_memory(buffers->interm_enterp);
+    destroy_dynamic_memory(buffers);
 }
 
 /*
@@ -30,9 +43,9 @@ void main_args(int argc, char* argv[], struct main_data* data) {
 */
 void create_dynamic_memory_buffers(struct main_data* data) {
     int intSize = sizeof(int);
-    data->client_pids = create_dynamic_memory(intSize);
-    data->intermediary_pids = create_dynamic_memory(intSize);
-    data->enterprise_pids = create_dynamic_memory(intSize); 
+    data->client_pids = create_dynamic_memory((data->n_clients)*intSize);
+    data->intermediary_pids = create_dynamic_memory((data->n_intermediaries)*intSize);
+    data->enterprise_pids = create_dynamic_memory((data->n_enterprises)*intSize); 
     // process ids are different, this just initiates the pointer -- they need to be filled
     data->client_stats = create_dynamic_memory((data->n_clients)*intSize);
     data->intermediary_stats = create_dynamic_memory((data->n_intermediaries)*intSize);
@@ -66,12 +79,33 @@ void create_shared_memory_buffers(struct main_data* data, struct comm_buffers* b
 * func that iniciates client/interm/company processes. you can use launch_*
 * store the pids in its respective arrays in data structure
 */
-void launch_processes(struct comm_buffers* buffers, struct main_data* data){}
+void launch_processes(struct comm_buffers* buffers, struct main_data* data){
+    for(int i = 0; i<(data->n_clients); i++){
+        //!! currently assuming:
+        // id: i, iterating thru 0 - n_clients
+        // pid: returned after launch
+        int pid = launch_client(i,buffers,data);
+        data->client_pids[i] = pid;
+    }
+
+    for(int i = 0; i<(data->n_intermediaries); i++){
+        int pid = launch_interm(i,buffers,data);
+        data->intermediary_pids[i] = pid;
+    }
+
+    for(int i = 0; i<(data->n_enterprises); i++){
+        int pid = launch_enterp(i,buffers,data);
+        data->enterprise_pids[i] = pid;
+    }
+}
 
 /*
 * user interact func to receive 4 commands
 */
-void user_interaction(struct comm_buffers* buffers, struct main_data* data){}
+void user_interaction(struct comm_buffers* buffers, struct main_data* data){
+    // reads user input
+    // calls blah
+}
 
 /*
 * creates a opertaion, defined by op_counter and data introduced
