@@ -11,14 +11,37 @@
     if (id == 1) -> order was given to terminate the program, return the number of processed operations
 * can use other func in intermediary.h
 */
-int execute_intermediary(int interm_id, struct comm_buffers* buffers, struct main_data* data){}
+int execute_intermediary(int interm_id, struct comm_buffers* buffers, struct main_data* data)
+{
+    while (1) {
+
+        int id = data->terminate;
+
+        if(id == 0) {
+            ;
+        }
+
+        else if(id == 1) {
+            break;
+        }
+    }
+    return 0;
+}
 
 
 /* 
 * reads the operation in buffer mem shared with clients and intermd.
 * before reading, check if (data->terminate == 1) -> immediately return function
 */
-void intermediary_receive_operation(struct operation* op, struct comm_buffers* buffers, struct main_data* data){}
+void intermediary_receive_operation(struct operation* op, struct comm_buffers* buffers, struct main_data* data)
+{
+    if (data->terminate == 1)
+    {
+        return 0;
+    }
+    struct circular_buffer *buffer = buffers->client_interm;
+    read_client_interm_buffer(buffer, data->buffers_size, op);
+}
 
 
 /* 
