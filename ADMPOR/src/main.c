@@ -54,18 +54,20 @@ void create_dynamic_memory_buffers(struct main_data* data) {
 void create_shared_memory_buffers(struct main_data* data, struct comm_buffers* buffers){
     //buffer pointers
     int buffSize = data->buffers_size;
-    buffers->main_client = create_shared_memory("hi", buffSize);
-    buffers->client_interm = create_shared_memory("heo", buffSize);
-    buffers->interm_enterp = create_shared_memory("hehe", buffSize);
+    size_t opSize = sizeof(struct operation);
+    buffers->main_client = create_shared_memory(STR_SHM_MAIN_CLIENT_BUFFER, buffSize*opSize);
+    buffers->client_interm = create_shared_memory(STR_SHM_CLIENT_INTERM_BUFFER, buffSize*opSize);
+    buffers->interm_enterp = create_shared_memory(STR_SHM_INTERM_ENTERP_BUFFER, buffSize*opSize);
 
-    //ptrs -> pointing at every element
-    buffers->main_client->ptrs = buffers->main_client;
-    buffers->client_interm->ptrs = buffers->client_interm;
-    buffers->interm_enterp->ptrs = buffers->interm_enterp;
+    //ptrs -> pointing at every element //STH WRONG HERE
+    size_t intSize = sizeof(int);
+    buffers->main_client->ptrs = create_shared_memory(STR_SHM_MAIN_CLIENT_PTR, intSize);
+    buffers->client_interm->ptrs = create_shared_memory(STR_SHM_CLIENT_INTERM_PTR, intSize);
+    buffers->interm_enterp->ptrs = create_shared_memory(STR_SHM_INTERM_ENTERP_PTR, intSize);
 
     // point their actual ptrs at the beginning too?
-    data->results = create_shared_memory('results', (data->max_ops)*sizeof(struct operation));
-    data->terminate = create_shared_memory('terminate',sizeof(int));
+    data->results = create_shared_memory(STR_SHM_RESULTS, (data->max_ops)*opSize);
+    data->terminate = create_shared_memory(STR_SHM_TERMINATE,sizeof(int));
 }
 
 /*
@@ -98,11 +100,12 @@ void launch_processes(struct comm_buffers* buffers, struct main_data* data){
 void user_interaction(struct comm_buffers* buffers, struct main_data* data){
     // reads user input
     printf("Enter command: ");
-    char cmd[30];
-    scanf("%s",&cmd);
-    int op_counter = 0;
-    if(strcmp(cmd,"op")==0){
-        create_request(op_counter,buffers,data);
+    // char cmd[30];
+    char *cmd = malloc(30*sizeof(char));
+    scanf("%s",cmd);
+    int* op_counter = malloc(sizeof(int));
+    if(strcmp(cmd,"op")==0){ //also a pointer
+        create_request(op_counter,buffers,data); // supposed to be a pointer
     }else if(strcmp(cmd,"status")==0){
         read_status(data);
     }else if(strcmp(cmd,"stop")==0){
@@ -197,7 +200,7 @@ int main(int argc, char *argv[]) {
     main_args(argc, argv, data);
     create_dynamic_memory_buffers(data); // mother fucker thats causing the weird shit
     create_shared_memory_buffers(data, buffers);
-    launch_processes(buffers, data);
+    // launch_processes(buffers, data);
     // user_interaction(buffers, data);
     //release memory before terminating
     // destroy_dynamic_memory(data);

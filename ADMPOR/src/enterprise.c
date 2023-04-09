@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include "memory.h"
+#include "memory-private.h"
 #include "main.h"
+#include "enterprise.h"
 
 
 /* 
@@ -18,7 +20,7 @@ int execute_enterprise(int enterp_id, struct comm_buffers* buffers, struct main_
 
     while (check == 1) {
 
-        int id = data->terminate;
+        int id = (int)data->terminate;
 
         if(id == -1) {
             
@@ -48,7 +50,7 @@ int execute_enterprise(int enterp_id, struct comm_buffers* buffers, struct main_
 */
 void enterprise_receive_operation(struct operation* op, int enterp_id, struct comm_buffers* buffers, struct main_data* data){
 
-    if (data->terminate != 1){
+    if ((int)data->terminate != 1){
 
         read_interm_enterp_buffer(buffers->interm_enterp, enterp_id, data->buffers_size, op);
         enterprise_process_operation(op, enterp_id, data, data->enterprise_stats);

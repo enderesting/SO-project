@@ -22,7 +22,7 @@
 void *create_shared_memory(char *name, int size)
 {
     char* legalName = malloc(strlen(name) + 2);
-    legalName[0] = '\\'; 
+    legalName[0] = '/'; 
     legalName[1] = '\0';
     strcpy(&legalName[1], name);
 

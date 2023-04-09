@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include "memory.h"
+#include "memory-private.h"
 #include "main.h"
+#include "client.h"
+
 
 /* 
 * main comp. function. should execute infinite loop where:
@@ -17,7 +20,7 @@ int execute_client(int client_id, struct comm_buffers* buffers, struct main_data
 
     while (check == 1) {
 
-        int id = data->terminate;
+        int id = (int)data->terminate;
 
         if(id == -1) {
             
@@ -46,7 +49,7 @@ int execute_client(int client_id, struct comm_buffers* buffers, struct main_data
 */
 void client_get_operation(struct operation* op, int client_id, struct comm_buffers* buffers, struct main_data* data){
 
-    if (data->terminate != 1){
+    if ((int)data->terminate != 1){
 
         read_main_client_buffer(buffers->main_client, client_id, data->buffers_size, op);
         client_process_operation(op, client_id, data, data->client_stats);

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "memory.h"
 #include "main.h"
+#include "intermediary.h"
 
 /* 
 * main intm. function. should execute infinite loop where:
