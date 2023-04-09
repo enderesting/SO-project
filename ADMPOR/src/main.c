@@ -1,28 +1,11 @@
 #include <stdio.h>
+#include <stdlib.h> 
 #include <string.h>
 #include "main.h"
+#include "process.h"
 
 
-int main(int argc, char *argv[]) {
-    //init data structures
-    struct main_data* data = create_dynamic_memory(sizeof(struct main_data));
-    struct comm_buffers* buffers = create_dynamic_memory(sizeof(struct comm_buffers));
-    buffers->main_client = create_dynamic_memory(sizeof(struct rnd_access_buffer));
-    buffers->client_interm = create_dynamic_memory(sizeof(struct circular_buffer));
-    buffers->interm_enterp = create_dynamic_memory(sizeof(struct rnd_access_buffer));
-    //execute main code
-    main_args(argc, argv, data); //segm fault 11
-    create_dynamic_memory_buffers(data); // mother fucker thats causing the weird shit
-    // create_shared_memory_buffers(data, buffers);
-    // launch_processes(buffers, data);
-    // user_interaction(buffers, data);
-    //release memory before terminating
-    // destroy_dynamic_memory(data);
-    // destroy_dynamic_memory(buffers->main_client);
-    // destroy_dynamic_memory(buffers->client_interm);
-    // destroy_dynamic_memory(buffers->interm_enterp);
-    // destroy_dynamic_memory(buffers);
-}
+
 
 /*
 * reads app args (max operations, shared buffer size,
@@ -30,11 +13,12 @@ int main(int argc, char *argv[]) {
 */
 void main_args(int argc, char* argv[], struct main_data* data) {
     if (argc == 6){
-        data->max_ops = (int)argv[0];
-        data->buffers_size = (int)argv[1];
-        data->n_clients = (int)argv[2];
-        data->n_intermediaries = (int)argv[3];
-        data->n_enterprises = (int)argv[4];
+        data->max_ops = atoi(argv[1]);
+        data->buffers_size = atoi(argv[2]);
+        data->n_clients =  atoi(argv[3]);
+        data->n_intermediaries = atoi(argv[4]);
+        data->n_enterprises = atoi(argv[5]);
+        // printf("ur shit: %d,%d,%d,%d,%d",data->max_ops,data->buffers_size,data->n_clients,data->n_intermediaries,data->n_enterprises);
     }else{
         printf("incorrect number of arguments. please run the program with the following args: \n\n");
         printf("$./AdmPor max_ops buffers_size n_clients n_intermediaries n_enterprises\n\n");
@@ -70,9 +54,9 @@ void create_dynamic_memory_buffers(struct main_data* data) {
 void create_shared_memory_buffers(struct main_data* data, struct comm_buffers* buffers){
     //buffer pointers
     int buffSize = data->buffers_size;
-    buffers->main_client = create_shared_memory('main_client', buffSize);
-    buffers->client_interm = create_shared_memory('client_interm', buffSize);
-    buffers->interm_enterp = create_shared_memory('interm_enterp', buffSize);
+    buffers->main_client = create_shared_memory("hi", buffSize);
+    buffers->client_interm = create_shared_memory("heo", buffSize);
+    buffers->interm_enterp = create_shared_memory("hehe", buffSize);
 
     //ptrs -> pointing at every element
     buffers->main_client->ptrs = buffers->main_client;
@@ -199,3 +183,26 @@ void write_statistics(struct main_data* data){}
 * func that frees all buffers of dynamic/shared memory in data struct
 */
 void destroy_memory_buffers(struct main_data* data, struct comm_buffers* buffers){}
+
+
+
+int main(int argc, char *argv[]) {
+    //init data structures
+    struct main_data* data = create_dynamic_memory(sizeof(struct main_data));
+    struct comm_buffers* buffers = create_dynamic_memory(sizeof(struct comm_buffers));
+    buffers->main_client = create_dynamic_memory(sizeof(struct rnd_access_buffer));
+    buffers->client_interm = create_dynamic_memory(sizeof(struct circular_buffer));
+    buffers->interm_enterp = create_dynamic_memory(sizeof(struct rnd_access_buffer));
+    //execute main code
+    main_args(argc, argv, data);
+    create_dynamic_memory_buffers(data); // mother fucker thats causing the weird shit
+    create_shared_memory_buffers(data, buffers);
+    launch_processes(buffers, data);
+    // user_interaction(buffers, data);
+    //release memory before terminating
+    // destroy_dynamic_memory(data);
+    // destroy_dynamic_memory(buffers->main_client);
+    // destroy_dynamic_memory(buffers->client_interm);
+    // destroy_dynamic_memory(buffers->interm_enterp);
+    // destroy_dynamic_memory(buffers);
+}

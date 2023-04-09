@@ -1,5 +1,24 @@
 {
     "files.associations": {
-        "memory.h": "c"
-    }
+        "memory.h": "c",
+        "main.h": "c",
+        "process.h": "c",
+        "typeinfo": "c"
+    },
+    "makefile.configurations": [
+    ],
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "/Users/yichencao/Desktop/College/Ano2_Sem2/SO/AdmPor/so-project-1/ADMPOR/bin",
+            "binaryPath": "/Users/yichencao/Desktop/College/Ano2_Sem2/SO/AdmPor/so-project-1/ADMPOR/bin/AdmPor",
+            "binaryArgs": [
+                "5 10 2 3 1"
+            ]
+        },
+        {
+            "cwd": "/Users/yichencao/Desktop/College/Ano2_Sem2/SO/AdmPor/so-project-1/ADMPOR/bin",
+            "binaryPath": "/Users/yichencao/Desktop/College/Ano2_Sem2/SO/AdmPor/so-project-1/ADMPOR/bin/AdmPor",
+            "binaryArgs": []
+        }
+    ]
 }

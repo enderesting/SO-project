@@ -9,6 +9,7 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <string.h>
 #include "main.h"
 #include "memory-private.h"
 
@@ -20,26 +21,31 @@
  */
 void *create_shared_memory(char *name, int size)
 {
+    char* legalName = malloc(strlen(name) + 2);
+    legalName[0] = '\\'; 
+    legalName[1] = '\0';
+    strcpy(&legalName[1], name);
+
     int *ptr;
     int ret;
-    int fd = shm_open(name, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+    int fd = shm_open(legalName, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
     if (fd == -1)
     {
-        perror(name);
+        perror(legalName);
         exit(1);
     }
 
     ret = ftruncate(fd, size);
     if (ret == -1)
     {
-        perror(name);
+        perror(legalName);
         exit(2);
     }
 
     ptr = mmap(0, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
     if (ptr == MAP_FAILED)
     {
-        perror(name);
+        perror(legalName);
         perror("-mmap");
         exit(3);
     }

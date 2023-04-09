@@ -10,7 +10,7 @@
 */
 int launch_client(int client_id, struct comm_buffers* buffers, struct main_data* data);
 
-
+ 
 /* Função que inicia um novo processo intermediário através da função fork do SO. O novo
 * processo irá executar a função execute_intermediary, fazendo exit do retorno.
 * O processo pai devolve o pid do processo criado.
