@@ -16,7 +16,7 @@ int execute_intermediary(int interm_id, struct comm_buffers* buffers, struct mai
 {
     while (1) {
 
-        int id = data->terminate;
+        int id = (int)data->terminate;
 
         if(id == 0) {
             ;
@@ -36,7 +36,7 @@ int execute_intermediary(int interm_id, struct comm_buffers* buffers, struct mai
 */
 void intermediary_receive_operation(struct operation* op, struct comm_buffers* buffers, struct main_data* data)
 {
-    if (data->terminate == 1)
+    if ((int)data->terminate == 1)
     {
         return 0;
     }
