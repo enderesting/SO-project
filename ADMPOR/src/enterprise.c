@@ -12,7 +12,33 @@
     if (id == 1) -> order was given to terminate the program, return the number of processed operations
 * can use other func in enterprise.h
 */
-int execute_enterprise(int enterp_id, struct comm_buffers* buffers, struct main_data* data){}
+int execute_enterprise(int enterp_id, struct comm_buffers* buffers, struct main_data* data){
+
+    int check = 1;
+
+    while (check == 1) {
+
+        int id = data->terminate;
+
+        if(id == -1) {
+            
+            printf("Error");
+        }
+
+        else if(id == 0) {
+
+            enterprise_receive_operation(buffers->main_client->buffer, enterp_id, buffers, data);
+        }
+
+        else if(id == 1) {
+
+            check = 0;
+        }
+    }
+    
+    
+    return data->enterprise_stats[enterp_id];
+}
 
 
 /*
@@ -20,7 +46,14 @@ int execute_enterprise(int enterp_id, struct comm_buffers* buffers, struct main_
 * before reading, check if (data->terminate == 1) -> immediately return function
 * 
 */
-void enterprise_receive_operation(struct operation* op, int enterp_id, struct comm_buffers* buffers, struct main_data* data){}
+void enterprise_receive_operation(struct operation* op, int enterp_id, struct comm_buffers* buffers, struct main_data* data){
+
+    if (data->terminate != 1){
+
+        read_interm_enterp_buffer(buffers->interm_enterp, enterp_id, data->buffers_size, op);
+        enterprise_process_operation(op, enterp_id, data, data->enterprise_stats);
+    }
+}
 
 
 /* 
@@ -28,4 +61,28 @@ void enterprise_receive_operation(struct operation* op, int enterp_id, struct co
 * change the state to 'E' or 'A' depending on num of max op. reached.
 * op. counter++. updates the operation in data structure
 */
-void enterprise_process_operation(struct operation* op, int enterp_id, struct main_data* data, int* counter){}
+void enterprise_process_operation(struct operation* op, int enterp_id, struct main_data* data, int* counter){
+
+    int ops = 0;
+
+    for(int i = 0; i < data->n_clients; i++) {
+
+        ops += data->client_stats[i];
+    }
+
+    if ((ops - 1) < data->max_ops) {
+        
+        op->status = 'E';
+        data->results->status = 'E';
+    }
+
+    else {
+
+        op->status = 'A';
+        data->results->status = 'A';
+    }
+
+    op->receiving_enterp = enterp_id;
+    data->results->receiving_enterp = enterp_id;
+    counter[enterp_id]++;
+}
