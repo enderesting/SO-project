@@ -1,6 +1,7 @@
 #include <stdio.h>
-#include "memory.h"
+#include <string.h>
 #include "main.h"
+
 
 int main(int argc, char *argv[]) {
     //init data structures
@@ -10,17 +11,17 @@ int main(int argc, char *argv[]) {
     buffers->client_interm = create_dynamic_memory(sizeof(struct circular_buffer));
     buffers->interm_enterp = create_dynamic_memory(sizeof(struct rnd_access_buffer));
     //execute main code
-    main_args(argc, argv, data);
-    create_dynamic_memory_buffers(data);
-    create_shared_memory_buffers(data, buffers);
-    launch_processes(buffers, data);
-    user_interaction(buffers, data);
+    main_args(argc, argv, data); //segm fault 11
+    create_dynamic_memory_buffers(data); // mother fucker thats causing the weird shit
+    // create_shared_memory_buffers(data, buffers);
+    // launch_processes(buffers, data);
+    // user_interaction(buffers, data);
     //release memory before terminating
-    destroy_dynamic_memory(data);
-    destroy_dynamic_memory(buffers->main_client);
-    destroy_dynamic_memory(buffers->client_interm);
-    destroy_dynamic_memory(buffers->interm_enterp);
-    destroy_dynamic_memory(buffers);
+    // destroy_dynamic_memory(data);
+    // destroy_dynamic_memory(buffers->main_client);
+    // destroy_dynamic_memory(buffers->client_interm);
+    // destroy_dynamic_memory(buffers->interm_enterp);
+    // destroy_dynamic_memory(buffers);
 }
 
 /*
@@ -28,12 +29,20 @@ int main(int argc, char *argv[]) {
 * num of client + intermediates + companies). keep in main_data
 */
 void main_args(int argc, char* argv[], struct main_data* data) {
-    if (argc == 5){
+    if (argc == 6){
         data->max_ops = (int)argv[0];
         data->buffers_size = (int)argv[1];
         data->n_clients = (int)argv[2];
         data->n_intermediaries = (int)argv[3];
         data->n_enterprises = (int)argv[4];
+    }else{
+        printf("incorrect number of arguments. please run the program with the following args: \n\n");
+        printf("$./AdmPor max_ops buffers_size n_clients n_intermediaries n_enterprises\n\n");
+        printf("max_ops          - max number of operations\n");
+        printf("buffers_size     - max size of buffer\n");
+        printf("n_clients        - max number of clients\n");
+        printf("n_intermediaries - max number of intermediaries\n");
+        printf("n_enterprises    - max number of enterpreises\n");
     }
 }
 
@@ -104,15 +113,60 @@ void launch_processes(struct comm_buffers* buffers, struct main_data* data){
 */
 void user_interaction(struct comm_buffers* buffers, struct main_data* data){
     // reads user input
-    // calls blah
+    printf("Enter command: ");
+    char cmd[30];
+    scanf("%s",&cmd);
+    int op_counter = 0;
+    if(strcmp(cmd,"op")==0){
+        create_request(op_counter,buffers,data);
+    }else if(strcmp(cmd,"status")==0){
+        read_status(data);
+    }else if(strcmp(cmd,"stop")==0){
+        stop_execution(data,buffers);
+    }else if(strcmp(cmd,"help") == 0){
+        printf("op <client_id> <company_id> - creates a new operation from specified client to company,\nreturning the operation's id.\n");
+        printf("status <id> - return the state of the operation specified by id.\n");
+        printf("stop - terminates AdmPor program.\n");
+        printf("help - displays this command menu screen.\n");
+    }else{
+        //command invalid! enter "help" to get help
+        printf("Command invalid! Please try again.\n Enter 'help' for a list of available commands.\n");
+    }
+    // fgets(cmd,30,stdin); // reads a string from stdin
+    // int client, empresa,id,op_counter;
+    // op_counter = 0;
+    // if (sscanf(cmd,"op %d %d",&client,&empresa) == 3){//see if matches "op <client_id> <company_id>"
+    //     //creates a new op
+    //     create_request(op_counter,buffers,data);
+    // }else if(sscanf(cmd,"status %d",&id) == 2){
+    //     //check status for id
+    //     read_status(data);
+    // }else if(sscanf(cmd,"stop") == 1){
+    //     //terminates program
+    //     stop_execution(data,buffers);
+    // }else if(sscanf(cmd,"help") == 1){
+    //     //prints help
+    //     printf("op <client_id> <company_id> - creates a new operation from specified client to company,\nreturning the operation's id.\n");
+    //     printf("status <id> - return the state of the operation specified by id.\n");
+    //     printf("stop - terminates AdmPor program.\n");
+    //     printf("help - displays this command menu screen.\n");
+    // }else{
+    //     //command invalid! enter "help" to get help
+    //     printf("Command invalid! Please try again.\n Enter 'help' for a list of available commands.\n");
+    // }
 }
 
 /*
-* creates a opertaion, defined by op_counter and data introduced
-* in the memory buffer shared between main and clients. print operation ip and op_counter++
+* creates a operation, defined by op_counter and data introduced in command line
+* write op in the memory buffer shared between main and clients. print operation ip and op_counter++
 * never create more opertation than the size of array data->results.
 */
-void create_request(int* op_counter, struct comm_buffers* buffers, struct main_data* data){}
+void create_request(int* op_counter, struct comm_buffers* buffers, struct main_data* data){
+    // struct operation meow = {op_counter,};
+    int client,empresa;
+    scanf(" %d %d", &client, &empresa);
+    printf("ur ids are %d and %d respectively\n", client, empresa);
+}
 
 /*
 * func that reads operation id, user and see if its valid
