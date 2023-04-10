@@ -1,12 +1,17 @@
 # #directories# #
 #.c files:
 SRC_DIR := ./src
+# SRC_DIR := /Users/yichencao/Desktop/College/Ano2_Sem2/SO/AdmPor/so-project-1/ADMPOR/src
 #.h files:
 INC_DIR := ./include
+# INC_DIR := /Users/yichencao/Desktop/College/Ano2_Sem2/SO/AdmPor/so-project-1/ADMPOR/include
 #.o files:
 OBJ_DIR := ./obj
+# OBJ_DIR := /Users/yichencao/Desktop/College/Ano2_Sem2/SO/AdmPor/so-project-1/ADMPOR/obj
 #executable output:
 BIN_DIR := ./bin
+# BIN_DIR := /Users/yichencao/Desktop/College/Ano2_Sem2/SO/AdmPor/so-project-1/ADMPOR/bin
+#change before submission: BIN_DIR := ./bin
 
 # #implicit rules# #
 CC = gcc

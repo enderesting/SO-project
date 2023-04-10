@@ -21,6 +21,13 @@
  */
 void *create_shared_memory(char *name, int size)
 {
+<<<<<<< HEAD
+=======
+    // char* legalName = malloc(strlen(name) + 2);
+    // legalName[0] = '/'; 
+    // legalName[1] = '\0';
+    // strcpy(&legalName[1], name);
+>>>>>>> 4b4f862e4fe3dc84fe4506ed2f9c6c99a271778d
     int name_length = strlen(name);
     char* legal_name = calloc(name_length+2, sizeof(char));
     legal_name[0] = '/';
@@ -28,7 +35,11 @@ void *create_shared_memory(char *name, int size)
     {
         legal_name[1 + i] = name[i];
     }
+<<<<<<< HEAD
     legal_name[name_length+1] = '\0';
+=======
+    // legal_name[name_length+1] = '\0';
+>>>>>>> 4b4f862e4fe3dc84fe4506ed2f9c6c99a271778d
 
     int *ptr;
     int ret;
