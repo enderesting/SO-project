@@ -209,17 +209,47 @@ void read_status(struct main_data* data){
 * write stats at end of program. free reserved shared/dynamic memory
 * use other main.h aux funcs
 */
-void stop_execution(struct main_data* data, struct comm_buffers* buffers){}
+void stop_execution(struct main_data* data, struct comm_buffers* buffers){
+
+    *data->terminate = 1;
+    wait_processes(data);
+    write_statistics(data);
+    destroy_memory_buffers(data, buffers);
+}
 
 /* 
 * waits all processes to end, using wait_process do process.h
 */
-void wait_processes(struct main_data* data){}
+void wait_processes(struct main_data* data){
+
+    for(int i = 0; i < (data->n_clients); i++){
+
+        wait_process((data->client_pids[i]));
+    }
+}
 
 /*
 * func that prints AdmPor final stats aka how many process processed by everyone.
 */
-void write_statistics(struct main_data* data){}
+void write_statistics(struct main_data* data){
+
+    printf("Terminando o AdmPor! Imprimindo estatísticas:\n");
+
+    for(int i = 0; i < data->n_clients; i++){
+
+        printf("Cliente %d preparou %d pedidos!\n", i, data->client_stats[i]);
+    }
+
+    for(int i = 0; i < data->n_intermediaries; i++){
+
+        printf("Intermediário %d preparou %d pedidos!\n", i, data->intermediary_stats[i]);
+    }
+
+    for(int i = 0; i < data->n_enterprises; i++){
+
+        printf("Empresa %d preparou %d pedidos!\n", i, data->enterprise_stats[i]);
+    }
+}
 
 /*
 * func that frees all buffers of dynamic/shared memory in data struct

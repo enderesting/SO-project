@@ -72,12 +72,12 @@ void enterprise_process_operation(struct operation* op, int enterp_id, struct ma
 
     int ops = 0;
 
-    for(int i = 0; i < data->n_clients; i++) {
+    for(int i = 0; i < (data->n_clients); i++) {
 
         ops += data->client_stats[i];
     }
 
-    if ((ops - 1) < data->max_ops) {
+    if ((ops - 1) < (data->max_ops)) {
         
         op->status = 'E';
         data->results->status = 'E';
