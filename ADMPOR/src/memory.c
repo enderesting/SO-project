@@ -57,6 +57,8 @@ void *create_shared_memory(char *name, int size)
         perror("-mmap");
         exit(3);
     }
+
+    memset(ptr,0,size);
     return ptr;
 }
 
@@ -187,14 +189,19 @@ void read_interm_enterp_buffer(struct rnd_access_buffer *buffer, int enterp_id, 
 
 void write_rnd_access_buffer(struct rnd_access_buffer *buffer, int buffer_size, struct operation *op)
 {
-    int *p = buffer->ptrs;
-    struct operation *ops = buffer->buffer;
+    int *ptr = buffer->ptrs;
+    struct operation *buffer_ptr = buffer->buffer;
     for (int i = 0; i < buffer_size; i++)
     {
-        if (*(p + i) == 0)
+        printf("guy number %d\n",ptr[i]);
+        if (ptr[i] == 0)
         {
-            *(p + i) = 1;
-            *(ops + i) = *op;
+            printf("we found him!\n");
+            ptr[i] = 1;
+            printf("ptr[i]: %d\n",ptr[i]);
+            struct operation oppy = *op;
+            printf("data oppy: %d    i: %d\n",oppy.id,i);
+            buffer_ptr[i] = oppy;//this bitch
             break;
         }
     }
