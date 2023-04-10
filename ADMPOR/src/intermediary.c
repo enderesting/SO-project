@@ -36,10 +36,10 @@ int execute_intermediary(int interm_id, struct comm_buffers* buffers, struct mai
 */
 void intermediary_receive_operation(struct operation* op, struct comm_buffers* buffers, struct main_data* data)
 {
-    if ((int)data->terminate == 1)
-    {
-        return 0;
-    }
+    // if ((int)data->terminate == 1)
+    // {
+    //     // return 0;
+    // }
     struct circular_buffer *buffer = buffers->client_interm;
     read_client_interm_buffer(buffer, data->buffers_size, op);
 }

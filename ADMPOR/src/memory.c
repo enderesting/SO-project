@@ -21,31 +21,39 @@
  */
 void *create_shared_memory(char *name, int size)
 {
-    char* legalName = malloc(strlen(name) + 2);
-    legalName[0] = '/'; 
-    legalName[1] = '\0';
-    strcpy(&legalName[1], name);
+    // char* legalName = malloc(strlen(name) + 2);
+    // legalName[0] = '/'; 
+    // legalName[1] = '\0';
+    // strcpy(&legalName[1], name);
+    int name_length = strlen(name);
+    char* legal_name = calloc(name_length+2, sizeof(char));
+    legal_name[0] = '/';
+    for(int i = 0; i < name_length; i++)
+    {
+        legal_name[1 + i] = name[i];
+    }
+    // legal_name[name_length+1] = '\0';
 
     int *ptr;
     int ret;
-    int fd = shm_open(legalName, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+    int fd = shm_open(legal_name, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
     if (fd == -1)
     {
-        perror(legalName);
+        perror(legal_name);
         exit(1);
     }
 
     ret = ftruncate(fd, size);
     if (ret == -1)
     {
-        perror(legalName);
+        perror(legal_name);
         exit(2);
     }
 
     ptr = mmap(0, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
     if (ptr == MAP_FAILED)
     {
-        perror(legalName);
+        perror(legal_name);
         perror("-mmap");
         exit(3);
     }
