@@ -32,6 +32,7 @@ void main_args(int argc, char* argv[], struct main_data* data) {
         printf("n_clients        - max number of clients\n");
         printf("n_intermediaries - max number of intermediaries\n");
         printf("n_enterprises    - max number of enterpreises\n");
+        exit(1);
     }
 }
 
@@ -66,9 +67,9 @@ void create_shared_memory_buffers(struct main_data* data, struct comm_buffers* b
 
     //ptrs -> pointing at every element //STH WRONG HERE
     size_t intSize = sizeof(int);
-    buffers->main_client->ptrs = create_shared_memory(STR_SHM_MAIN_CLIENT_PTR, intSize);
-    buffers->client_interm->ptrs = create_shared_memory(STR_SHM_CLIENT_INTERM_PTR, intSize);
-    buffers->interm_enterp->ptrs = create_shared_memory(STR_SHM_INTERM_ENTERP_PTR, intSize);
+    buffers->main_client->ptrs = create_shared_memory(STR_SHM_MAIN_CLIENT_PTR, buffSize*intSize);
+    buffers->client_interm->ptrs = create_shared_memory(STR_SHM_CLIENT_INTERM_PTR, buffSize*intSize);
+    buffers->interm_enterp->ptrs = create_shared_memory(STR_SHM_INTERM_ENTERP_PTR, buffSize*intSize);
 
     // point their actual ptrs at the beginning too?
     data->results = create_shared_memory(STR_SHM_RESULTS, (data->max_ops)*opSize);
@@ -166,7 +167,7 @@ void create_request(int* op_counter, struct comm_buffers* buffers, struct main_d
         op_ptr->requested_enterp = empresa;
         op_ptr->status = 'M';
         //write in main-client buffer
-        write_main_client_buffer(buffers->main_client,data->buffers_size,op_ptr);
+        write_main_client_buffer(buffers->main_client,data->buffers_size,op_ptr); // happens right after here
         printf("operation id: %d",opCount);
         *op_counter = opCount+1;
         // op_counter_pointer
@@ -187,8 +188,11 @@ void read_status(struct main_data* data){
         struct operation *ptr = data->results;
         for(int i; i<data->max_ops; i++){
             if(ptr->id == id){
-                printf("congrats u found operation id: %d \n",id);
-                // printf("id:");
+                printf("operation id: %d\n",ptr->id);
+                printf("operation id: %d\n",ptr->id);
+                printf("operation id: %d\n",ptr->id);
+                printf("operation id: %d\n",ptr->id);
+                printf("operation id: %d\n",ptr->id);
             }
             ptr++;
         }
