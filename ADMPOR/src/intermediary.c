@@ -39,32 +39,6 @@ int execute_intermediary(int interm_id, struct comm_buffers *buffers, struct mai
     return number_of_ops;
 }
 
-<<<<<<< HEAD
-=======
-
-/* 
-* reads the operation in buffer mem shared with clients and intermd.
-* before reading, check if (data->terminate == 1) -> immediately return function
-*/
-void intermediary_receive_operation(struct operation* op, struct comm_buffers* buffers, struct main_data* data)
-{
-    // if ((int)data->terminate == 1)
-    // {
-    //     // return 0;
-    // }
-    struct circular_buffer *buffer = buffers->client_interm;
-    read_client_interm_buffer(buffer, data->buffers_size, op);
-}
-
-
-/* 
-* func that process an operation, change its <receiving_intermediary> field for  <interm_id>
-* change the state to 'I', op. counter++. updates the operation in data structure
-*/
-void intermediary_process_operation(struct operation* op, int interm_id, struct main_data* data, int* counter){}
-
-
->>>>>>> 4b4f862e4fe3dc84fe4506ed2f9c6c99a271778d
 /*
  * reads the operation in buffer mem shared with clients and intermd.
  * before reading, check if (data->terminate == 1) -> immediately return function
