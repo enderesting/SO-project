@@ -24,7 +24,6 @@ void main_args(int argc, char* argv[], struct main_data* data) {
         data->n_clients =  atoi(argv[3]);
         data->n_intermediaries = atoi(argv[4]);
         data->n_enterprises = atoi(argv[5]);
-        // printf("ur shit: %d,%d,%d,%d,%d",data->max_ops,data->buffers_size,data->n_clients,data->n_intermediaries,data->n_enterprises);
     }else{
         printf("Incorrect number of arguments. please run the program with the following args: \n");
         printf("$./AdmPor max_ops buffers_size n_clients n_intermediaries n_enterprises\n");
@@ -73,7 +72,7 @@ void create_shared_memory_buffers(struct main_data* data, struct comm_buffers* b
     buffers->interm_enterp->ptrs = create_shared_memory(STR_SHM_INTERM_ENTERP_PTR, buffSize*intSize);
 
     // point their actual ptrs at the beginning too?
-    data->results = create_shared_memory(STR_SHM_RESULTS, (data->max_ops)*opSize);
+    data->results = create_shared_memory(STR_SHM_RESULTS, MAX_RESULTS*opSize);
     data->terminate = create_shared_memory(STR_SHM_TERMINATE,sizeof(int));
 }
 
@@ -83,9 +82,6 @@ void create_shared_memory_buffers(struct main_data* data, struct comm_buffers* b
 */
 void launch_processes(struct comm_buffers* buffers, struct main_data* data){
     for(int i = 0; i<(data->n_clients); i++){
-        //!! currently assuming:
-        // id: i, iterating thru 0 - n_clients
-        // pid: returned after launch
         int pid = launch_client(i,buffers,data);
         data->client_pids[i] = pid;
     }
@@ -150,7 +146,6 @@ void create_request(int* op_counter, struct comm_buffers* buffers, struct main_d
     scanf(" %d %d", &client, &empresa);
     if(opCount<(data->max_ops)){
         //create op
-        //printf("ur ids are %d and %d respectively\n", client, empresa);
         struct operation *op_ptr = calloc(1,sizeof(struct operation));
         op_ptr->id = opCount;
         op_ptr->requesting_client = client;
@@ -166,7 +161,8 @@ void create_request(int* op_counter, struct comm_buffers* buffers, struct main_d
         *op_counter = opCount+1;
         // op_counter_pointer
     }else{
-        printf("ayyy thats too many op. shut the fuck up now");
+        printf("O número máximo dee operação já foi atingido.\n");
+        stop_execution(data,buffers);
     }
 }
 

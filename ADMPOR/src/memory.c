@@ -22,10 +22,6 @@
  */
 void *create_shared_memory(char *name, int size)
 {
-    // char* legalName = malloc(strlen(name) + 2);
-    // legalName[0] = '/'; 
-    // legalName[1] = '\0';
-    // strcpy(&legalName[1], name);
     int name_length = strlen(name);
     char* legal_name = calloc(name_length+2, sizeof(char));
     legal_name[0] = '/';
@@ -33,7 +29,6 @@ void *create_shared_memory(char *name, int size)
     {
         legal_name[1 + i] = name[i];
     }
-    // legal_name[name_length+1] = '\0';
 
     int *ptr;
     int ret;
@@ -194,16 +189,10 @@ void write_rnd_access_buffer(struct rnd_access_buffer *buffer, int buffer_size, 
     struct operation *buffer_ptr = buffer->buffer;
     for (int i = 0; i < buffer_size; i++)
     {
-        // printf("guy number %d\n",ptr[i]);
         if (ptr[i] == 0)
         {
-            // printf("we found him!\n");
             ptr[i] = 1;
-            // struct operation oppy = *op;
-            // struct operation *oppy = calloc(1,sizeof(struct operation));
-            printf("data oppy: %d    i: %d\n",op->id,i);
-            buffer_ptr[i] = *op;//this bitch
-            // printf("teehee");
+            buffer_ptr[i] = *op;
             break;
         }
     }
