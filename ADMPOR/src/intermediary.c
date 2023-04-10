@@ -26,7 +26,7 @@ int execute_intermediary(int interm_id, struct comm_buffers *buffers, struct mai
         struct operation *op =  buffers->main_client->buffer;
         int id = *(data->terminate);
 
-        if (id == 0)
+        if (id == 0 && data->results->status == 'C')
         {
             intermediary_receive_operation(op, buffers, data);
             intermediary_process_operation(op, interm_id, data, data->intermediary_stats);

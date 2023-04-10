@@ -33,7 +33,7 @@ int execute_client(int client_id, struct comm_buffers* buffers, struct main_data
             printf("Error");
         }
 
-        else if(id == 0) {
+        else if(id == 0 && data->results->status == 'M') {
  
             client_get_operation(buffers->main_client->buffer, client_id, buffers, data);            
         }
