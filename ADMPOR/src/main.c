@@ -25,13 +25,13 @@ void main_args(int argc, char* argv[], struct main_data* data) {
         data->n_enterprises = atoi(argv[5]);
         // printf("ur shit: %d,%d,%d,%d,%d",data->max_ops,data->buffers_size,data->n_clients,data->n_intermediaries,data->n_enterprises);
     }else{
-        printf("incorrect number of arguments. please run the program with the following args: \n\n");
-        printf("$./AdmPor max_ops buffers_size n_clients n_intermediaries n_enterprises\n\n");
+        printf("Incorrect number of arguments. please run the program with the following args: \n");
+        printf("$./AdmPor max_ops buffers_size n_clients n_intermediaries n_enterprises\n");
         printf("max_ops          - max number of operations\n");
         printf("buffers_size     - max size of buffer\n");
         printf("n_clients        - max number of clients\n");
         printf("n_intermediaries - max number of intermediaries\n");
-        printf("n_enterprises    - max number of enterpreises\n");
+        printf("n_enterprises    - max number of enterpreises\n\n");
         exit(1);
     }
 }
@@ -186,15 +186,18 @@ void read_status(struct main_data* data){
 
     if(0<=id && id<(data->max_ops)){
         struct operation *ptr = data->results;
-        for(int i; i<data->max_ops; i++){
-            if(ptr->id == id){
+        for(int i = 0; i<data->max_ops; i++){
+            if(ptr[i].id == id){
                 printf("operation id: %d\n",ptr->id);
-                printf("operation id: %d\n",ptr->id);
-                printf("operation id: %d\n",ptr->id);
-                printf("operation id: %d\n",ptr->id);
-                printf("operation id: %d\n",ptr->id);
+                printf("requesting client: %d\n",ptr->requesting_client);
+                printf("requesting enterprise: %d\n",ptr->requested_enterp);
+                printf("status: %c\n",ptr->status);
+                printf("receiving client id: %d\n",ptr->receiving_client);
+                printf("receiving intermediary id: %d\n",ptr->receiving_interm);
+                printf("receiving enterprise id: %d\n",ptr->receiving_enterp);
+                // return(0);
+                break;
             }
-            ptr++;
         }
     }
 }
@@ -231,12 +234,13 @@ void destroy_memory_buffers(struct main_data* data, struct comm_buffers* buffers
     destroy_shared_memory(STR_SHM_CLIENT_INTERM_BUFFER, buffers->client_interm, buffSize*opSize);
     destroy_shared_memory(STR_SHM_MAIN_CLIENT_BUFFER, buffers->main_client, buffSize*opSize);
 
-    destroy_shared_memory(STR_SHM_MAIN_CLIENT_PTR, buffers->main_client, buffSize*opSize);
-    destroy_shared_memory(STR_SHM_CLIENT_INTERM_PTR, buffers->client_interm, buffSize*opSize);
-    destroy_shared_memory(STR_SHM_INTERM_ENTERP_PTR, buffers->interm_enterp, buffSize*opSize);
+    int intSize = sizeof(int);
+    destroy_shared_memory(STR_SHM_MAIN_CLIENT_PTR, buffers->main_client, buffSize*intSize);
+    destroy_shared_memory(STR_SHM_CLIENT_INTERM_PTR, buffers->client_interm, buffSize*intSize);
+    destroy_shared_memory(STR_SHM_INTERM_ENTERP_PTR, buffers->interm_enterp, buffSize*intSize);
 
     destroy_shared_memory(STR_SHM_RESULTS, data->results, (data->max_ops)*opSize);
-    destroy_shared_memory(STR_SHM_TERMINATE, data->terminate, sizeof(int));
+    destroy_shared_memory(STR_SHM_TERMINATE, data->terminate, intSize);
 
     //destroying dynamic memory
     destroy_dynamic_memory(data->client_pids);
