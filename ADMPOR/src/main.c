@@ -316,10 +316,11 @@ int main(int argc, char *argv[]) {
     buffers->interm_enterp = create_dynamic_memory(sizeof(struct rnd_access_buffer));
     //execute main code
     main_args(argc, argv, data);
-    create_dynamic_memory_buffers(data); // mother fucker thats causing the weird shit
+    create_dynamic_memory_buffers(data);
     create_shared_memory_buffers(data, buffers);
     launch_processes(buffers, data);
     user_interaction(buffers, data);
     //release memory before terminating
-    //destroy_memory_buffers(data, buffers);
+    destroy_dynamic_memory(data);
+    destroy_dynamic_memory(buffers);
 }
