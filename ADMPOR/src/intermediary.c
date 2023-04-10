@@ -19,24 +19,28 @@
 */
 int execute_intermediary(int interm_id, struct comm_buffers *buffers, struct main_data *data)
 {
-    int number_of_ops = 0;
-    while (1)
+    int check = 1;
+    while (check == 1)
     {
-        struct operation *op;
-        intermediary_receive_operation(op, buffers, data);
-        int end = *(data->terminate);
+        struct operation *op =  buffers->main_client->buffer;
+        int id = *(data->terminate);
 
-        if (!end && op->id != -1)
+        if (id == 0)
         {
-            intermediary_process_operation(op, interm_id, data, &number_of_ops);
+            intermediary_receive_operation(op, buffers, data);
+            intermediary_process_operation(op, interm_id, data, data->intermediary_stats);
             intermediary_send_answer(op, buffers, data);
         }
-        else if (end)
+        else if (id == -1)
         {
-            break;
+            printf("Error");
+        }
+        else if(id == 1)
+        {
+            check = 0;
         }
     }
-    return number_of_ops;
+    return data->intermediary_stats[interm_id];
 }
 
 /*
@@ -65,7 +69,7 @@ void intermediary_process_operation(struct operation *op, int interm_id, struct 
     op->status = 'I';
     data->results->receiving_interm = interm_id;
     data->results->status = 'I';
-    (*counter)++;
+    counter[interm_id]++;
 }
 
 /*

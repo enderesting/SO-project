@@ -181,7 +181,7 @@ void create_request(int* op_counter, struct comm_buffers* buffers, struct main_d
 */
 void read_status(struct main_data* data){
     int id;
-    scanf(" %d %d", &id);
+    scanf("%d", &id);
 
     if(0<=id && id<(data->max_ops)){
         struct operation *ptr = data->results;
