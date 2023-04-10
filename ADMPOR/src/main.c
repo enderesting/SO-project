@@ -104,26 +104,36 @@ void launch_processes(struct comm_buffers* buffers, struct main_data* data){
 * user interact func to receive 4 commands
 */
 void user_interaction(struct comm_buffers* buffers, struct main_data* data){
-    // reads user input
-    printf("Enter command: ");
-    // char cmd[30];
-    char *cmd = malloc(30*sizeof(char));
-    scanf("%s",cmd);
-    int* op_counter = malloc(sizeof(int));
-    if(strcmp(cmd,"op")==0){ //also a pointer
-        create_request(op_counter,buffers,data); // supposed to be a pointer
-    }else if(strcmp(cmd,"status")==0){
-        read_status(data);
-    }else if(strcmp(cmd,"stop")==0){
-        stop_execution(data,buffers);
-    }else if(strcmp(cmd,"help") == 0){
-        printf("op <client_id> <company_id> - creates a new operation from specified client to company,\nreturning the operation's id.\n");
-        printf("status <id> - return the state of the operation specified by id.\n");
-        printf("stop - terminates AdmPor program.\n");
-        printf("help - displays this command menu screen.\n");
-    }else{
-        //command invalid! enter "help" to get help
-        printf("Command invalid! Please try again.\n Enter 'help' for a list of available commands.\n");
+    int check = 1;
+    printf("Ações disponíveis:\n");
+        printf("        op cliente empresa - criar uma nova operação\n");
+        printf("        status id - consultar o estado de uma operação\n");
+        printf("        stop - terminar a execução do AdmPor\n");
+        printf("        help - imprime informação sobre as ações disponíveis\n");
+    while(check == 1){
+        // reads user input
+        printf("Introduzir ação:\n");
+        // char cmd[30];
+        char *cmd = malloc(30*sizeof(char));
+        scanf("%s",cmd);
+        int* op_counter = malloc(sizeof(int));
+        if(strcmp(cmd,"op")==0){ //also a pointer
+            create_request(op_counter,buffers,data); // supposed to be a pointer
+        }else if(strcmp(cmd,"status")==0){
+            read_status(data);
+        }else if(strcmp(cmd,"stop")==0){
+            stop_execution(data,buffers);
+            check = 0;
+        }else if(strcmp(cmd,"help") == 0){
+            printf("Ações disponíveis:\n");
+            printf("        op cliente empresa - criar uma nova operação\n");
+            printf("        status id - consultar o estado de uma operação\n");
+            printf("        stop - terminar a execução do AdmPor\n");
+            printf("        help - imprime informação sobre as ações disponíveis\n");
+        }else{
+            //command invalid! enter "help" to get help
+            printf("Ação não reconhecida, insira 'help' para assistência.\n");
+        }
     }
     // fgets(cmd,30,stdin); // reads a string from stdin
     // int client, empresa,id,op_counter;
@@ -160,7 +170,7 @@ void create_request(int* op_counter, struct comm_buffers* buffers, struct main_d
     scanf(" %d %d", &client, &empresa);
     if(opCount<(data->max_ops)){
         //create op
-        printf("ur ids are %d and %d respectively\n", client, empresa);
+        //printf("ur ids are %d and %d respectively\n", client, empresa);
         struct operation *op_ptr = calloc(1,sizeof(struct operation));
         op_ptr->id = opCount; // huh? the last three are ok?
         op_ptr->requesting_client = client;
@@ -168,7 +178,7 @@ void create_request(int* op_counter, struct comm_buffers* buffers, struct main_d
         op_ptr->status = 'M';
         //write in main-client buffer
         write_main_client_buffer(buffers->main_client,data->buffers_size,op_ptr); // happens right after here
-        printf("operation id: %d",opCount);
+        printf("O pedido #%d foi criado!",opCount);
         *op_counter = opCount+1;
         // op_counter_pointer
     }
@@ -184,18 +194,31 @@ void read_status(struct main_data* data){
     int id;
     scanf("%d", &id);
 
-    if(0<=id && id<(data->max_ops)){
+    if(data->results->status == '\0') {
+
+        printf("Pedido %d ainda não é válido\n", id);
+    }
+
+    else if(0<=id && id<(data->max_ops)){
         struct operation *ptr = data->results;
         for(int i = 0; i<data->max_ops; i++){
             if(ptr[i].id == id){
-                printf("operation id: %d\n",ptr->id);
-                printf("requesting client: %d\n",ptr->requesting_client);
-                printf("requesting enterprise: %d\n",ptr->requested_enterp);
-                printf("status: %c\n",ptr->status);
-                printf("receiving client id: %d\n",ptr->receiving_client);
-                printf("receiving intermediary id: %d\n",ptr->receiving_interm);
-                printf("receiving enterprise id: %d\n",ptr->receiving_enterp);
-                // return(0);
+
+                if(data->results->status == 'C'){
+                    printf("Pedido %d com estado %c requisitado pelo cliente %d à empresa %d, foi recebido pelo cliente %d!\n", 
+                    id, data->results->status, data->results->requesting_client, data->results->requested_enterp, 
+                    data->results->receiving_client);
+                }
+                else if(data->results->status == 'I'){
+                    printf("Pedido %d com estado %c requisitado pelo cliente %d à empresa %d, foi recebido pelo cliente %d e pelo intermediário %d!\n", 
+                    id, data->results->status, data->results->requesting_client, data->results->requested_enterp, 
+                    data->results->receiving_client, data->results->receiving_interm);
+                }
+                else if(data->results->status == 'E'){
+                    printf("Pedido %d com estado %c requisitado pelo cliente %d à empresa %d, foi recebido pelo cliente %d, pelo intermediário %d e pela empresa %d!\n", 
+                    id, data->results->status, data->results->requesting_client, data->results->requested_enterp, 
+                    data->results->receiving_client, data->results->receiving_interm, data->results->receiving_enterp);
+                }
                 break;
             }
         }
@@ -294,8 +317,8 @@ int main(int argc, char *argv[]) {
     main_args(argc, argv, data);
     create_dynamic_memory_buffers(data); // mother fucker thats causing the weird shit
     create_shared_memory_buffers(data, buffers);
-    // launch_processes(buffers, data);
-    // user_interaction(buffers, data);
+    launch_processes(buffers, data);
+    user_interaction(buffers, data);
     //release memory before terminating
-    destroy_memory_buffers(data, buffers);
+    //destroy_memory_buffers(data, buffers);
 }
