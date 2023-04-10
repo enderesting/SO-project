@@ -217,7 +217,31 @@ void write_statistics(struct main_data* data){}
 /*
 * func that frees all buffers of dynamic/shared memory in data struct
 */
-void destroy_memory_buffers(struct main_data* data, struct comm_buffers* buffers){}
+void destroy_memory_buffers(struct main_data* data, struct comm_buffers* buffers){
+    
+    int buffSize = data->buffers_size;
+    size_t opSize = sizeof(struct operation);
+
+    //destroying shared memory
+    destroy_shared_memory(STR_SHM_INTERM_ENTERP_BUFFER, buffers->interm_enterp, buffSize*opSize);
+    destroy_shared_memory(STR_SHM_CLIENT_INTERM_BUFFER, buffers->client_interm, buffSize*opSize);
+    destroy_shared_memory(STR_SHM_MAIN_CLIENT_BUFFER, buffers->main_client, buffSize*opSize);
+
+    destroy_shared_memory(STR_SHM_MAIN_CLIENT_PTR, buffers->main_client, buffSize*opSize);
+    destroy_shared_memory(STR_SHM_CLIENT_INTERM_PTR, buffers->client_interm, buffSize*opSize);
+    destroy_shared_memory(STR_SHM_INTERM_ENTERP_PTR, buffers->interm_enterp, buffSize*opSize);
+
+    destroy_shared_memory(STR_SHM_RESULTS, data->results, (data->max_ops)*opSize);
+    destroy_shared_memory(STR_SHM_TERMINATE, data->terminate, sizeof(int));
+
+    //destroying dynamic memory
+    destroy_dynamic_memory(data->client_pids);
+    destroy_dynamic_memory(data->intermediary_pids);
+    destroy_dynamic_memory(data->enterprise_pids);
+    destroy_dynamic_memory(data->client_stats);
+    destroy_dynamic_memory(data->intermediary_stats);
+    destroy_dynamic_memory(data->enterprise_stats);
+}
 
 
 
@@ -235,9 +259,5 @@ int main(int argc, char *argv[]) {
     // launch_processes(buffers, data);
     // user_interaction(buffers, data);
     //release memory before terminating
-    // destroy_dynamic_memory(data);
-    // destroy_dynamic_memory(buffers->main_client);
-    // destroy_dynamic_memory(buffers->client_interm);
-    // destroy_dynamic_memory(buffers->interm_enterp);
-    // destroy_dynamic_memory(buffers);
+    destroy_memory_buffers(data, buffers);
 }
