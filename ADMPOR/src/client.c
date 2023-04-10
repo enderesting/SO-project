@@ -21,30 +21,40 @@
 * can use other func in client.h.
 */
 int execute_client(int client_id, struct comm_buffers* buffers, struct main_data* data){
-
-    int check = 1;
-
-    while (check == 1) {
-
-        int id = *(data->terminate);
-
-        if(id == -1) {
-            
+    int isEnding = *(data->terminate);
+    while (isEnding != 1) {
+        if(isEnding == -1) {
             printf("Error");
         }
-
-        else if(id == 0 && data->results->status == 'M') {
- 
-            client_get_operation(buffers->main_client->buffer, client_id, buffers, data);            
+        else if(isEnding == 0) {
+            int *ptr = buffers->main_client->ptrs;
+            struct operation *buff_ptr = buffers->main_client->buffer;
+            for(int i = 0; i<(data->buffers_size); i++){
+                if(ptr[i]==1 && (buff_ptr[i].requesting_client) == client_id){
+                    printf("heehee hoo hoo: %d \n",ptr[i]);
+                    client_get_operation(buffers->main_client->buffer, client_id, buffers, data);
+                    ptr[i]=0;
+                    break;
+                }
+            }
+            //for loop thru mainclient buffer. if operation matches M + cilient id, call get operation          
         }
-
-        else if(id == 1) {
-
-            check = 0;
-        }
+        isEnding = *(data->terminate);
     }
-    
-    
+    // int check = 1;
+    // while (check == 1) {
+    //     int id = *(data->terminate);
+    //     if(id == -1) {
+    //         printf("Error");
+    //     }
+    //     else if(id == 0 && data->results->status == 'M') {
+    //         printf("heehee hoo hoo");
+    //         client_get_operation(buffers->main_client->buffer, client_id, buffers, data);            
+    //     }
+    //     else if(id == 1) {
+    //         check = 0;
+    //     }
+    // }
     return data->client_stats[client_id];
 }
 
@@ -55,6 +65,7 @@ int execute_client(int client_id, struct comm_buffers* buffers, struct main_data
 */
 void client_get_operation(struct operation* op, int client_id, struct comm_buffers* buffers, struct main_data* data){
 
+printf("srsly");
     if (*(data->terminate) != 1){
 
         read_main_client_buffer(buffers->main_client, client_id, data->buffers_size, op);
@@ -70,7 +81,7 @@ void client_get_operation(struct operation* op, int client_id, struct comm_buffe
 * op. counter++. updates the operation in data structure
 */
 void client_process_operation(struct operation* op, int client_id, struct main_data* data, int* counter){
-
+    printf("processing");
     op->receiving_client = client_id;
     op->status = 'C';
     data->results->receiving_client = client_id;
@@ -82,6 +93,6 @@ void client_process_operation(struct operation* op, int client_id, struct main_d
 * func that writes an operation in buffer mem shared between clients and intermed.
 */
 void client_send_operation(struct operation* op, struct comm_buffers* buffers, struct main_data* data){
-     
+    printf("meowmoewmoew");
     write_client_interm_buffer(buffers->client_interm, data->buffers_size, op);
 }

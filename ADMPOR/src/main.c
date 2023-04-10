@@ -106,6 +106,7 @@ void launch_processes(struct comm_buffers* buffers, struct main_data* data){
 */
 void user_interaction(struct comm_buffers* buffers, struct main_data* data){
     int check = 1;
+    int* op_counter = calloc(1,sizeof(int));
     printf("Ações disponíveis:\n");
         printf("        op cliente empresa - criar uma nova operação\n");
         printf("        status id - consultar o estado de uma operação\n");
@@ -117,7 +118,7 @@ void user_interaction(struct comm_buffers* buffers, struct main_data* data){
         // char cmd[30];
         char *cmd = malloc(30*sizeof(char));
         scanf("%s",cmd);
-        int* op_counter = malloc(sizeof(int));
+        
         if(strcmp(cmd,"op")==0){ //also a pointer
             create_request(op_counter,buffers,data); // supposed to be a pointer
         }else if(strcmp(cmd,"status")==0){
@@ -136,28 +137,6 @@ void user_interaction(struct comm_buffers* buffers, struct main_data* data){
             printf("Ação não reconhecida, insira 'help' para assistência.\n");
         }
     }
-    // fgets(cmd,30,stdin); // reads a string from stdin
-    // int client, empresa,id,op_counter;
-    // op_counter = 0;
-    // if (sscanf(cmd,"op %d %d",&client,&empresa) == 3){//see if matches "op <client_id> <company_id>"
-    //     //creates a new op
-    //     create_request(op_counter,buffers,data);
-    // }else if(sscanf(cmd,"status %d",&id) == 2){
-    //     //check status for id
-    //     read_status(data);
-    // }else if(sscanf(cmd,"stop") == 1){
-    //     //terminates program
-    //     stop_execution(data,buffers);
-    // }else if(sscanf(cmd,"help") == 1){
-    //     //prints help
-    //     printf("op <client_id> <company_id> - creates a new operation from specified client to company,\nreturning the operation's id.\n");
-    //     printf("status <id> - return the state of the operation specified by id.\n");
-    //     printf("stop - terminates AdmPor program.\n");
-    //     printf("help - displays this command menu screen.\n");
-    // }else{
-    //     //command invalid! enter "help" to get help
-    //     printf("Command invalid! Please try again.\n Enter 'help' for a list of available commands.\n");
-    // }
 }
 
 /*
@@ -173,15 +152,21 @@ void create_request(int* op_counter, struct comm_buffers* buffers, struct main_d
         //create op
         //printf("ur ids are %d and %d respectively\n", client, empresa);
         struct operation *op_ptr = calloc(1,sizeof(struct operation));
-        op_ptr->id = opCount; // huh? the last three are ok?
+        op_ptr->id = opCount;
         op_ptr->requesting_client = client;
         op_ptr->requested_enterp = empresa;
         op_ptr->status = 'M';
+        op_ptr->receiving_client = -1;
+        op_ptr->receiving_interm = -1;
+        op_ptr->receiving_enterp = -1;
+
         //write in main-client buffer
         write_main_client_buffer(buffers->main_client,data->buffers_size,op_ptr); // happens right after here
         printf("O pedido #%d foi criado!\n",opCount);
         *op_counter = opCount+1;
         // op_counter_pointer
+    }else{
+        printf("ayyy thats too many op. shut the fuck up now");
     }
 }
 
@@ -239,6 +224,7 @@ void stop_execution(struct main_data* data, struct comm_buffers* buffers){
     wait_processes(data);
     write_statistics(data);
     destroy_memory_buffers(data, buffers);
+    exit(0);
 }
 
 /* 
@@ -303,6 +289,7 @@ void destroy_memory_buffers(struct main_data* data, struct comm_buffers* buffers
     destroy_dynamic_memory(data->client_stats);
     destroy_dynamic_memory(data->intermediary_stats);
     destroy_dynamic_memory(data->enterprise_stats);
+    printf("finished the massacre");
 }
 
 

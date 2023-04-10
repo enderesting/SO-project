@@ -194,15 +194,16 @@ void write_rnd_access_buffer(struct rnd_access_buffer *buffer, int buffer_size, 
     struct operation *buffer_ptr = buffer->buffer;
     for (int i = 0; i < buffer_size; i++)
     {
-        printf("guy number %d\n",ptr[i]);
+        // printf("guy number %d\n",ptr[i]);
         if (ptr[i] == 0)
         {
-            printf("we found him!\n");
+            // printf("we found him!\n");
             ptr[i] = 1;
-            printf("ptr[i]: %d\n",ptr[i]);
-            struct operation oppy = *op;
-            printf("data oppy: %d    i: %d\n",oppy.id,i);
-            buffer_ptr[i] = oppy;//this bitch
+            // struct operation oppy = *op;
+            // struct operation *oppy = calloc(1,sizeof(struct operation));
+            printf("data oppy: %d    i: %d\n",op->id,i);
+            buffer_ptr[i] = *op;//this bitch
+            // printf("teehee");
             break;
         }
     }
