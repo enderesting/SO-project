@@ -1,3 +1,8 @@
+/*
+ * Emily Sá          fc58200
+ * Yichen Cao "Mimi" fc58165
+ * Gonçalo Fernandes fc58194
+ */
 #include <stdio.h>
 #include "memory.h"
 #include "memory-private.h"
@@ -20,7 +25,7 @@ int execute_client(int client_id, struct comm_buffers* buffers, struct main_data
 
     while (check == 1) {
 
-        int id = (int)data->terminate;
+        int id = *(data->terminate);
 
         if(id == -1) {
             
@@ -49,7 +54,7 @@ int execute_client(int client_id, struct comm_buffers* buffers, struct main_data
 */
 void client_get_operation(struct operation* op, int client_id, struct comm_buffers* buffers, struct main_data* data){
 
-    if ((int)data->terminate != 1){
+    if (*(data->terminate) != 1){
 
         read_main_client_buffer(buffers->main_client, client_id, data->buffers_size, op);
         client_process_operation(op, client_id, data, data->client_stats);
