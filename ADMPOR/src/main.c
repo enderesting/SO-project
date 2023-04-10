@@ -150,15 +150,20 @@ void user_interaction(struct comm_buffers* buffers, struct main_data* data){
 */
 void create_request(int* op_counter_pointer, struct comm_buffers* buffers, struct main_data* data){
     int op_counter = (int) op_counter_pointer;
-    int client,empresa;
-    scanf(" %d %d", &client, &empresa);
-    printf("ur ids are %d and %d respectively\n", client, empresa);
-    struct operation newOp = {op_counter,client,empresa,0,0,0,0}; // huh?
-
     if(op_counter<(data->max_ops)){
         //create op
+        int client,empresa;
+        scanf(" %d %d", &client, &empresa);
+        printf("ur ids are %d and %d respectively\n", client, empresa);
+        struct operation *op_ptr = calloc(1,sizeof(struct operation));
+        op_ptr->id = op_counter; // huh? the last three are ok?
+        op_ptr->requesting_client = client;
+        op_ptr->requested_enterp = empresa;
+        op_ptr->status = 'M';
         //write in main-client buffer
+        write_main_client_buffer(buffers->main_client,data->buffers_size,op_ptr);
         //op ip
+        // op_counter_pointer
     }
 }
 
