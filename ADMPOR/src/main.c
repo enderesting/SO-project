@@ -153,21 +153,22 @@ void user_interaction(struct comm_buffers* buffers, struct main_data* data){
 * write op in the memory buffer shared between main and clients. print operation ip and op_counter++
 * never create more opertation than the size of array data->results.
 */
-void create_request(int* op_counter_pointer, struct comm_buffers* buffers, struct main_data* data){
-    int op_counter = (int) op_counter_pointer;
-    if(op_counter<(data->max_ops)){
+void create_request(int* op_counter, struct comm_buffers* buffers, struct main_data* data){
+    int opCount = *op_counter;
+    int client,empresa;
+    scanf(" %d %d", &client, &empresa);
+    if(opCount<(data->max_ops)){
         //create op
-        int client,empresa;
-        scanf(" %d %d", &client, &empresa);
         printf("ur ids are %d and %d respectively\n", client, empresa);
         struct operation *op_ptr = calloc(1,sizeof(struct operation));
-        op_ptr->id = op_counter; // huh? the last three are ok?
+        op_ptr->id = opCount; // huh? the last three are ok?
         op_ptr->requesting_client = client;
         op_ptr->requested_enterp = empresa;
         op_ptr->status = 'M';
         //write in main-client buffer
         write_main_client_buffer(buffers->main_client,data->buffers_size,op_ptr);
-        //op ip
+        printf("operation id: %d",opCount);
+        *op_counter = opCount+1;
         // op_counter_pointer
     }
 }
@@ -181,6 +182,17 @@ void create_request(int* op_counter_pointer, struct comm_buffers* buffers, struc
 void read_status(struct main_data* data){
     int id;
     scanf(" %d %d", &id);
+
+    if(0<=id && id<(data->max_ops)){
+        struct operation *ptr = data->results;
+        for(int i; i<data->max_ops; i++){
+            if(ptr->id == id){
+                printf("congrats u found operation id: %d \n",id);
+                // printf("id:");
+            }
+            ptr++;
+        }
+    }
 }
 
 /*
