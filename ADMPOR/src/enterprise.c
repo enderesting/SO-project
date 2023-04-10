@@ -1,3 +1,8 @@
+/*
+ * Emily Sá          fc58200
+ * Yichen Cao "Mimi" fc58165
+ * Gonçalo Fernandes fc58194
+ */
 #include <stdio.h>
 #include "memory.h"
 #include "memory-private.h"
@@ -20,7 +25,7 @@ int execute_enterprise(int enterp_id, struct comm_buffers* buffers, struct main_
 
     while (check == 1) {
 
-        int id = (int)data->terminate;
+        int id = *(data->terminate);
 
         if(id == -1) {
             
@@ -50,7 +55,7 @@ int execute_enterprise(int enterp_id, struct comm_buffers* buffers, struct main_
 */
 void enterprise_receive_operation(struct operation* op, int enterp_id, struct comm_buffers* buffers, struct main_data* data){
 
-    if ((int)data->terminate != 1){
+    if (*(data->terminate) != 1){
 
         read_interm_enterp_buffer(buffers->interm_enterp, enterp_id, data->buffers_size, op);
         enterprise_process_operation(op, enterp_id, data, data->enterprise_stats);
