@@ -1,5 +1,5 @@
 /*
- * Emily Sá          fc58200
+ * José "Emily" Sá   fc58200
  * Yichen Cao "Mimi" fc58165
  * Gonçalo Fernandes fc58194
  */
