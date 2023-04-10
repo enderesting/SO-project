@@ -62,14 +62,14 @@ void create_shared_memory_buffers(struct main_data* data, struct comm_buffers* b
     //buffer pointers
     int buffSize = data->buffers_size;
     size_t opSize = sizeof(struct operation);
-    buffers->main_client = create_shared_memory(STR_SHM_MAIN_CLIENT_BUFFER, buffSize*opSize);
-    buffers->client_interm = create_shared_memory(STR_SHM_CLIENT_INTERM_BUFFER, buffSize*opSize);
-    buffers->interm_enterp = create_shared_memory(STR_SHM_INTERM_ENTERP_BUFFER, buffSize*opSize);
+    buffers->main_client->buffer = create_shared_memory(STR_SHM_MAIN_CLIENT_BUFFER, buffSize*opSize);
+    buffers->client_interm->buffer = create_shared_memory(STR_SHM_CLIENT_INTERM_BUFFER, buffSize*opSize);
+    buffers->interm_enterp->buffer = create_shared_memory(STR_SHM_INTERM_ENTERP_BUFFER, buffSize*opSize);
 
-    //ptrs -> pointing at every element //STH WRONG HERE
+    //ptrs -> pointing at every element
     size_t intSize = sizeof(int);
     buffers->main_client->ptrs = create_shared_memory(STR_SHM_MAIN_CLIENT_PTR, buffSize*intSize);
-    buffers->client_interm->ptrs = create_shared_memory(STR_SHM_CLIENT_INTERM_PTR, buffSize*intSize);
+    buffers->client_interm->ptrs = create_shared_memory(STR_SHM_CLIENT_INTERM_PTR, buffSize*sizeof(struct pointers));
     buffers->interm_enterp->ptrs = create_shared_memory(STR_SHM_INTERM_ENTERP_PTR, buffSize*intSize);
 
     // point their actual ptrs at the beginning too?
