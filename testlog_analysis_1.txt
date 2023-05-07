@@ -1,0 +1,75 @@
+aluno-di@alunodi-VirtualBox:~/Desktop$ ./admpor 4 2 1 1 1
+so_memory_create: Parâmetro -size- é inválido ou é demasiado grande
+Ações disponíveis:
+	op cliente empresa - criar uma nova operação
+	status id - consultar o estado de uma operação
+	stop - termina a execução do AdmPor.
+	help - imprime informação sobre as ações disponíveis.
+Introduzir ação:
+
+op 0 0
+O pedido #0 foi criado!
+Cliente recebeu pedido!
+Intermediário recebeu pedido!
+Empresa recebeu pedido!
+Introduzir ação:
+status 0
+Pedido 0 com estado E requisitado pelo cliente 0 à empresa 0, foi recebido pelo cliente 0, processado pelo intermediário 0, e tratado pela empresa 0!
+Introduzir ação:
+op 0 0
+O pedido #1 foi criado!
+Cliente recebeu pedido!
+Intermediário recebeu pedido!
+Empresa recebeu pedido!
+Introduzir ação:
+status 1
+Pedido 1 com estado E requisitado pelo cliente 0 à empresa 0, foi recebido pelo cliente 0, processado pelo intermediário 0, e tratado pela empresa 0!
+Introduzir ação:
+op 0 1
+O pedido #2 foi criado!
+Cliente recebeu pedido!
+Intermediário recebeu pedido!
+Introduzir ação:
+status 2
+Pedido 2 com estado I requisitado pelo cliente 0 à empresa 1, foi recebido pelo cliente 0 e processado pelo intermediário 0!
+# 3 working entries received by interm. the last one is addressed to a non-existent company therefore its discounted
+
+Introduzir ação:
+op 1 0 
+O pedido #3 foi criado!
+Introduzir ação:
+status 3
+Pedido 3 com estado M requisitado pelo cliente 1 à empresa 0!
+
+Introduzir ação:
+op 1 1
+O pedido #4 foi criado!
+Introduzir ação:
+status 4  
+Pedido 4 com estado M requisitado pelo cliente 1 à empresa 1!
+################################################################################
+Introduzir ação:
+op 0 0  
+O pedido #5 foi criado!
+Introduzir ação:
+status 5 
+Pedido 5 com estado M requisitado pelo cliente 0 à empresa 0! ## why ?????????
+# why did 0 0 never go to C->I?
+################################################################################
+Introduzir ação:
+op 3 3
+O pedido #6 foi criado!
+
+Introduzir ação:
+status 6
+Pedido 6 com estado M requisitado pelo cliente 3 à empresa 3!
+Introduzir ação:
+stop
+Terminando o AdmPor! Imprimindo estatísticas:
+Cliente 0 preparou 3 pedidos!
+Intermediário 0 entregou 3 pedidos!
+Empresa 0 recebeu 2 pedidos!
+
+
+
+

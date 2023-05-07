@@ -1,0 +1,123 @@
+aluno-di@alunodi-VirtualBox:~/Desktop$ ./admpor 4 2 1 1 1
+so_memory_create: Parâmetro -size- é inválido ou é demasiado grande
+Ações disponíveis:
+	op cliente empresa - criar uma nova operação
+	status id - consultar o estado de uma operação
+	stop - termina a execução do AdmPor.
+	help - imprime informação sobre as ações disponíveis.
+
+Introduzir ação:
+op 0 0
+O pedido #0 foi criado!
+Cliente recebeu pedido!
+Intermediário recebeu pedido!
+Empresa recebeu pedido!
+Introduzir ação:
+status   00
+Pedido 0 com estado E requisitado pelo cliente 0 à empresa 0, foi recebido pelo cliente 0, processado pelo intermediário 0, e tratado pela empresa 0!
+
+Introduzir ação:
+op 0 0
+O pedido #1 foi criado!
+Cliente recebeu pedido!
+Intermediário recebeu pedido!
+Empresa recebeu pedido!
+Introduzir ação:
+status 1
+Pedido 1 com estado E requisitado pelo cliente 0 à empresa 0, foi recebido pelo cliente 0, processado pelo intermediário 0, e tratado pela empresa 0!
+
+Introduzir ação:
+op 0 0  
+O pedido #2 foi criado!
+Cliente recebeu pedido!
+Intermediário recebeu pedido!
+Empresa recebeu pedido!
+Introduzir ação:
+status 2
+Pedido 2 com estado E requisitado pelo cliente 0 à empresa 0, foi recebido pelo cliente 0, processado pelo intermediário 0, e tratado pela empresa 0!
+
+Introduzir ação:
+op 0 0
+O pedido #3 foi criado!
+Cliente recebeu pedido!
+Intermediário recebeu pedido!
+Empresa recebeu pedido!
+Introduzir ação:
+status 3
+Pedido 3 com estado E requisitado pelo cliente 0 à empresa 0, foi recebido pelo cliente 0, processado pelo intermediário 0, e tratado pela empresa 0!
+
+Introduzir ação:
+op 0 0
+O pedido #4 foi criado!
+Cliente recebeu pedido!
+Intermediário recebeu pedido!
+Empresa recebeu pedido!
+Introduzir ação:
+status 4
+Pedido 4 com estado A requisitado pelo cliente 0 à empresa 0, foi recebido pelo cliente 0, processado pelo intermediário 0, e tratado pela empresa 0!
+                    # as predicted, once requests reaches max_op, the company stops processing it.
+
+Introduzir ação:
+op 0 1
+O pedido #5 foi criado!
+Cliente recebeu pedido!
+Intermediário recebeu pedido!
+Introduzir ação:
+status 5
+Pedido 5 com estado I requisitado pelo cliente 0 à empresa 1, foi recebido pelo cliente 0 e processado pelo intermediário 0!
+                    # no company to send to therefore I
+
+Introduzir ação:
+op 0 0
+O pedido #6 foi criado!
+Cliente recebeu pedido!
+Intermediário recebeu pedido!
+Empresa recebeu pedido!
+Introduzir ação:
+status 6
+Pedido 6 com estado A requisitado pelo cliente 0 à empresa 0, foi recebido pelo cliente 0, processado pelo intermediário 0, e tratado pela empresa 0!
+
+Introduzir ação:
+op 0 1
+O pedido #7 foi criado!
+Cliente recebeu pedido!
+Intermediário recebeu pedido!
+Introduzir ação:
+status 7
+Pedido 7 com estado I requisitado pelo cliente 0 à empresa 1, foi recebido pelo cliente 0 e processado pelo intermediário 0!
+
+################################################################################ WHY?
+Introduzir ação:
+op 0 0
+O pedido #8 foi criado!
+Cliente recebeu pedido!
+Intermediário recebeu pedido!
+Introduzir ação:
+status 8
+Pedido 8 com estado I requisitado pelo cliente 0 à empresa 0, foi recebido pelo cliente 0 e processado pelo intermediário 0!
+################################################################################
+
+Introduzir ação:
+op 1 0
+O pedido #9 foi criado!
+Introduzir ação:
+status 9
+Pedido 9 com estado M requisitado pelo cliente 1 à empresa 0!
+
+################################################################################ WHY????
+Introduzir ação:
+op 0 0
+O pedido #10 foi criado!
+Cliente recebeu pedido!
+Intermediário recebeu pedido!
+Introduzir ação:
+status 10
+Pedido 10 com estado I requisitado pelo cliente 0 à empresa 0, foi recebido pelo cliente 0 e processado pelo intermediário 0!
+################################################################################
+
+Introduzir ação:
+stop
+Terminando o AdmPor! Imprimindo estatísticas:
+Cliente 0 preparou 10 pedidos!
+Intermediário 0 entregou 10 pedidos!
+Empresa 0 recebeu 6 pedidos!
