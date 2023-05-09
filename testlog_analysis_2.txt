@@ -29,10 +29,7 @@ Pedido 1 com estado E requisitado pelo cliente 0 à empresa 0, foi recebido pelo
 Introduzir ação:
 op 0 0  
 O pedido #2 foi criado!
-Cliente recebeu pedido!
-Intermediário recebeu pedido!
-Empresa recebeu pedido!
-Introduzir ação:
+Cliente recebeu pedido!buffer
 status 2
 Pedido 2 com estado E requisitado pelo cliente 0 à empresa 0, foi recebido pelo cliente 0, processado pelo intermediário 0, e tratado pela empresa 0!
 

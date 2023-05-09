@@ -9,6 +9,7 @@
 #include "memory-private.h"
 #include "main.h"
 #include "enterprise.h"
+#include <unistd.h>
 
 
 /* 
@@ -42,6 +43,8 @@ int execute_enterprise(int enterp_id, struct comm_buffers* buffers, struct main_
 
             check = 0;
         }
+
+        sleep(1);
     }
     
     

@@ -9,6 +9,7 @@
 #include <string.h>
 #include "main.h"
 #include "process.h"
+#include <unistd.h>
 
 
 
@@ -132,6 +133,7 @@ void user_interaction(struct comm_buffers* buffers, struct main_data* data){
             //command invalid! enter "help" to get help
             printf("Ação não reconhecida, insira 'help' para assistência.\n");
         }
+        sleep(1);
     }
 }
 

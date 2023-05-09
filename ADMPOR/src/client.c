@@ -9,6 +9,7 @@
 #include "memory-private.h"
 #include "main.h"
 #include "client.h"
+#include <unistd.h>
 
 
 /* 
@@ -37,6 +38,7 @@ int execute_client(int client_id, struct comm_buffers* buffers, struct main_data
             }
         }
         isEnding = *(data->terminate);
+        sleep(1);
     }
     return data->client_stats[client_id];
 }

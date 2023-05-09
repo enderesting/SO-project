@@ -8,6 +8,8 @@
 #include "memory.h"
 #include "main.h"
 #include "intermediary.h"
+#include <unistd.h>
+
 
 /*
 * main intm. function. should execute infinite loop where:
@@ -40,6 +42,7 @@ int execute_intermediary(int interm_id, struct comm_buffers *buffers, struct mai
         {
             check = 0;
         }
+        sleep(1);
     }
     return data->intermediary_stats[interm_id];
 }

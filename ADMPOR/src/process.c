@@ -14,6 +14,8 @@
 #include "process.h"
 #include "client.h"
 #include "main.h"
+#include <unistd.h>
+
 
 /* Função que inicia um novo processo cliente através da função fork do SO. O novo
 * processo irá executar a função execute_client respetiva, fazendo exit do retorno.
@@ -32,6 +34,8 @@ int launch_client(int client_id, struct comm_buffers *buffers, struct main_data 
     }
     if (pid == 0)
     {
+        // printf("yooo here comes the child");
+        sleep(30);
         int value = execute_client(client_id, buffers, data);
         exit(value);
     }
@@ -55,6 +59,7 @@ int launch_interm(int interm_id, struct comm_buffers *buffers, struct main_data 
     }
     if (pid == 0)
     {
+        sleep(30);
         int value = execute_intermediary(interm_id, buffers, data);
         exit(value);
     }
@@ -78,6 +83,7 @@ int launch_enterp(int enterp_id, struct comm_buffers *buffers, struct main_data 
     }
     if (pid == 0)
     {
+        sleep(30);
         int value = execute_enterprise(enterp_id, buffers, data);
         exit(value);
     }

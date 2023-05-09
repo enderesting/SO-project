@@ -19,7 +19,7 @@ BIN_DIR := ./bin
 
 # #implicit rules# #
 CC = gcc
-CFLAGS = -Wall -Wextra -I $(INC_DIR)
+CFLAGS = -g -Wall -Wextra -I $(INC_DIR)
 #		-Wall: includes all compile warning signs
 #		-Wextra: all the extra warning files.
 # 		-I $(INC_DIR): includes the directory to find the .h files
