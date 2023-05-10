@@ -30,9 +30,13 @@ int execute_client(int client_id, struct comm_buffers* buffers, struct main_data
         else if(isEnding == 0) {
             int *ptr = buffers->main_client->ptrs;
             struct operation *buff_ptr = buffers->main_client->buffer;
+
             for(int i = 0; i<(data->buffers_size); i++){
                 if(ptr[i]==1 && (buff_ptr[i].requesting_client) == client_id){
-                    client_get_operation(buffers->main_client->buffer, client_id, buffers, data);
+                    struct operation *op = calloc(1,sizeof(struct operation));
+                    client_get_operation(op, client_id, buffers, data);
+                    client_process_operation(op, client_id, data, data->client_stats);
+                    client_send_operation(op, buffers, data);
                     break;
                 }
             }
@@ -40,7 +44,7 @@ int execute_client(int client_id, struct comm_buffers* buffers, struct main_data
         isEnding = *(data->terminate);
         sleep(1);
     }
-    return data->client_stats[client_id];
+    return data->client_stats[client_id]; //remember the data?
 }
 
 
@@ -53,8 +57,8 @@ void client_get_operation(struct operation* op, int client_id, struct comm_buffe
     if (*(data->terminate) != 1){
 
         read_main_client_buffer(buffers->main_client, client_id, data->buffers_size, op);
-        client_process_operation(op, client_id, data, data->client_stats);
-        client_send_operation(op, buffers, data);
+        // client_process_operation(op, client_id, data, data->client_stats);
+        // client_send_operation(op, buffers, data);
     }
 }
 
@@ -67,8 +71,8 @@ void client_get_operation(struct operation* op, int client_id, struct comm_buffe
 void client_process_operation(struct operation* op, int client_id, struct main_data* data, int* counter){
     op->receiving_client = client_id;
     op->status = 'C';
-    data->results->receiving_client = client_id;
-    data->results->status = 'C';
+    int op_id = op->id;
+    data->results[op_id] = *op; // <-- i wonder if we should change each stat individually instead
     counter[client_id]++;
 }
 

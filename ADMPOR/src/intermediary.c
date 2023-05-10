@@ -25,7 +25,7 @@ int execute_intermediary(int interm_id, struct comm_buffers *buffers, struct mai
     int check = 1;
     while (check == 1)
     {
-        struct operation *op =  buffers->main_client->buffer;
+        struct operation *op =  buffers->client_interm->buffer;
         int id = *(data->terminate);
 
         if (id == 0 && data->results->status == 'C')
@@ -69,10 +69,10 @@ void intermediary_receive_operation(struct operation *op, struct comm_buffers *b
  */
 void intermediary_process_operation(struct operation *op, int interm_id, struct main_data *data, int *counter)
 {
+    int op_id = op->id;
     op->receiving_interm = interm_id;
     op->status = 'I';
-    data->results->receiving_interm = interm_id;
-    data->results->status = 'I';
+    data->results[op_id] = *op;
     counter[interm_id]++;
 }
 

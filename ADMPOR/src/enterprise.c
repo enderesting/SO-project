@@ -75,6 +75,7 @@ void enterprise_receive_operation(struct operation* op, int enterp_id, struct co
 void enterprise_process_operation(struct operation* op, int enterp_id, struct main_data* data, int* counter){
 
     int ops = 0;
+    int op_id = op->id;
 
     for(int i = 0; i < (data->n_clients); i++) {
 
@@ -84,16 +85,15 @@ void enterprise_process_operation(struct operation* op, int enterp_id, struct ma
     if ((ops - 1) < (data->max_ops)) {
         
         op->status = 'E';
-        data->results->status = 'E';
     }
 
     else {
 
         op->status = 'A';
-        data->results->status = 'A';
     }
 
     op->receiving_enterp = enterp_id;
-    data->results->receiving_enterp = enterp_id;
+    // data->results->receiving_enterp = enterp_id;
+    data->results[op_id] = *op;
     counter[enterp_id]++;
 }
