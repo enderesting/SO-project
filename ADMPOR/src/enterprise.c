@@ -37,6 +37,7 @@ int execute_enterprise(int enterp_id, struct comm_buffers* buffers, struct main_
                     struct operation *op = calloc(1,sizeof(struct operation));
                     enterprise_receive_operation(op, enterp_id, buffers, data);
                     enterprise_process_operation(op, enterp_id, data, data->enterprise_stats);
+                    free(op);
                     break;
                 }
             }

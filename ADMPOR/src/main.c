@@ -135,6 +135,7 @@ void user_interaction(struct comm_buffers* buffers, struct main_data* data){
         }
         sleep(1);
     }
+    free(op_counter);
 }
 
 /*
@@ -162,6 +163,7 @@ void create_request(int* op_counter, struct comm_buffers* buffers, struct main_d
         printf("O pedido #%d foi criado!\n",opCount);
         *op_counter = opCount+1;
         // op_counter_pointer
+        free(op_ptr);
     }else{
         printf("O número máximo dee operação já foi atingido.\n");
         stop_execution(data,buffers);

@@ -39,6 +39,7 @@ int execute_client(int client_id, struct comm_buffers* buffers, struct main_data
                     client_get_operation(op, client_id, buffers, data);
                     client_process_operation(op, client_id, data, data->client_stats);
                     client_send_operation(op, buffers, data);
+                    free(op);
                     break;
                 }
             }

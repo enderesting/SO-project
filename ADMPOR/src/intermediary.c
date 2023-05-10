@@ -29,18 +29,14 @@ int execute_intermediary(int interm_id, struct comm_buffers *buffers, struct mai
             printf("Error");
         }
         else if(isEnding == 0) {
-            int *ptr = buffers->client_interm->ptrs;
-            struct operation *buff_ptr = buffers->client_interm->buffer;
-
-            for(int i = 0; i<(data->buffers_size); i++){
-                if(ptr[i]==1){
                     struct operation *op = calloc(1,sizeof(struct operation));
                     intermediary_receive_operation(op, buffers, data);
-                    intermediary_process_operation(op, interm_id, data, data->intermediary_stats);
-                    intermediary_send_answer(op, buffers, data);
-                    break;
-                }
-            }
+                    if (op->id != -1){
+                        intermediary_process_operation(op, interm_id, data, data->intermediary_stats);
+                        intermediary_send_answer(op, buffers, data);    
+                    }
+
+                    free(op);
         }
         isEnding = *(data->terminate);
         sleep(1);
