@@ -10,6 +10,7 @@
 #include "main.h"
 #include "client.h"
 #include <unistd.h>
+#include <stdlib.h>
 
 
 /* 
@@ -33,6 +34,7 @@ int execute_client(int client_id, struct comm_buffers* buffers, struct main_data
 
             for(int i = 0; i<(data->buffers_size); i++){
                 if(ptr[i]==1 && (buff_ptr[i].requesting_client) == client_id){
+                    //printf("HEY I'M HERE 2\n");
                     struct operation *op = calloc(1,sizeof(struct operation));
                     client_get_operation(op, client_id, buffers, data);
                     client_process_operation(op, client_id, data, data->client_stats);
@@ -69,6 +71,7 @@ void client_get_operation(struct operation* op, int client_id, struct comm_buffe
 * op. counter++. updates the operation in data structure
 */
 void client_process_operation(struct operation* op, int client_id, struct main_data* data, int* counter){
+    //printf("HEY I'M HERE\n");
     op->receiving_client = client_id;
     op->status = 'C';
     int op_id = op->id;

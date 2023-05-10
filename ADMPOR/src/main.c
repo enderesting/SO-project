@@ -178,30 +178,31 @@ void read_status(struct main_data* data){
     int id;
     scanf("%d", &id);
 
-    if(data->results->status == '\0') {
+    if(data->results[id].status == '\0') {
 
+        //printf("%c\n", data->results[id].status);
+        //printf("%d\n", data->results[id].receiving_client);
         printf("Pedido %d ainda não é válido\n", id);
     }
 
     else if(0<=id && id<(data->max_ops)){
-        struct operation *ptr = data->results;
         for(int i = 0; i<data->max_ops; i++){
-            if(ptr[i].id == id){
+            if(data->results[i].id == id){
 
                 if(data->results->status == 'C'){
                     printf("Pedido %d com estado %c requisitado pelo cliente %d à empresa %d, foi recebido pelo cliente %d!\n", 
-                    id, data->results->status, data->results->requesting_client, data->results->requested_enterp, 
-                    data->results->receiving_client);
+                    id, data->results[i].status, data->results[i].requesting_client, data->results[i].requested_enterp, 
+                    data->results[i].receiving_client);
                 }
-                else if(data->results->status == 'I'){
+                else if(data->results[i].status == 'I'){
                     printf("Pedido %d com estado %c requisitado pelo cliente %d à empresa %d, foi recebido pelo cliente %d e pelo intermediário %d!\n", 
-                    id, data->results->status, data->results->requesting_client, data->results->requested_enterp, 
-                    data->results->receiving_client, data->results->receiving_interm);
+                    id, data->results[i].status, data->results[i].requesting_client, data->results[i].requested_enterp, 
+                    data->results[i].receiving_client, data->results[i].receiving_interm);
                 }
                 else if(data->results->status == 'E'){
                     printf("Pedido %d com estado %c requisitado pelo cliente %d à empresa %d, foi recebido pelo cliente %d, pelo intermediário %d e pela empresa %d!\n", 
-                    id, data->results->status, data->results->requesting_client, data->results->requested_enterp, 
-                    data->results->receiving_client, data->results->receiving_interm, data->results->receiving_enterp);
+                    id, data->results[i].status, data->results[i].requesting_client, data->results[i].requested_enterp, 
+                    data->results[i].receiving_client, data->results[i].receiving_interm, data->results[i].receiving_enterp);
                 }
                 break;
             }
