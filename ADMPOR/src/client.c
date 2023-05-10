@@ -57,10 +57,7 @@ int execute_client(int client_id, struct comm_buffers* buffers, struct main_data
 void client_get_operation(struct operation* op, int client_id, struct comm_buffers* buffers, struct main_data* data){
 
     if (*(data->terminate) != 1){
-
         read_main_client_buffer(buffers->main_client, client_id, data->buffers_size, op);
-        // client_process_operation(op, client_id, data, data->client_stats);
-        // client_send_operation(op, buffers, data);
     }
 }
 
@@ -74,8 +71,7 @@ void client_process_operation(struct operation* op, int client_id, struct main_d
     //printf("HEY I'M HERE\n");
     op->receiving_client = client_id;
     op->status = 'C';
-    int op_id = op->id;
-    data->results[op_id] = *op; // <-- i wonder if we should change each stat individually instead
+    data->results[op->id] = *op; // <-- i wonder if we should change each stat individually instead
     counter[client_id]++;
 }
 
