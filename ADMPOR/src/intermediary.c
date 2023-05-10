@@ -9,6 +9,7 @@
 #include "main.h"
 #include "intermediary.h"
 #include <unistd.h>
+#include <stdlib.h>
 
 
 /*
@@ -22,29 +23,29 @@
 */
 int execute_intermediary(int interm_id, struct comm_buffers *buffers, struct main_data *data)
 {
-    int check = 1;
-    while (check == 1)
-    {
-        struct operation *op =  buffers->client_interm->buffer;
-        int id = *(data->terminate);
-
-        if (id == 0 && data->results->status == 'C')
-        {
-            intermediary_receive_operation(op, buffers, data);
-            intermediary_process_operation(op, interm_id, data, data->intermediary_stats);
-            intermediary_send_answer(op, buffers, data);
-        }
-        else if (id == -1)
-        {
+    int isEnding = *(data->terminate);
+    while (isEnding != 1) {
+        if(isEnding == -1) {
             printf("Error");
         }
-        else if(id == 1)
-        {
-            check = 0;
+        else if(isEnding == 0) {
+            int *ptr = buffers->client_interm->ptrs;
+            struct operation *buff_ptr = buffers->client_interm->buffer;
+
+            for(int i = 0; i<(data->buffers_size); i++){
+                if(ptr[i]==1){
+                    struct operation *op = calloc(1,sizeof(struct operation));
+                    intermediary_receive_operation(op, buffers, data);
+                    intermediary_process_operation(op, interm_id, data, data->intermediary_stats);
+                    intermediary_send_answer(op, buffers, data);
+                    break;
+                }
+            }
         }
+        isEnding = *(data->terminate);
         sleep(1);
     }
-    return data->intermediary_stats[interm_id];
+    return data->client_stats[interm_id];
 }
 
 /*
@@ -53,10 +54,8 @@ int execute_intermediary(int interm_id, struct comm_buffers *buffers, struct mai
  */
 void intermediary_receive_operation(struct operation *op, struct comm_buffers *buffers, struct main_data *data)
 {
-    if (*(data->terminate) != 1)
-    {
-        struct circular_buffer *buffer = buffers->client_interm;
-        read_client_interm_buffer(buffer, data->buffers_size, op);
+    if (*(data->terminate) != 1){
+        read_client_interm_buffer(buffers->client_interm, data->buffers_size, op);
     }
 }
 
@@ -67,12 +66,10 @@ void intermediary_receive_operation(struct operation *op, struct comm_buffers *b
  * func that process an operation, change its <receiving_intermediary> field for  <interm_id>
  * change the state to 'I', op. counter++. updates the operation in data structure
  */
-void intermediary_process_operation(struct operation *op, int interm_id, struct main_data *data, int *counter)
-{
-    int op_id = op->id;
+void intermediary_process_operation(struct operation *op, int interm_id, struct main_data *data, int *counter){
     op->receiving_interm = interm_id;
     op->status = 'I';
-    data->results[op_id] = *op;
+    data->results[op->id] = *op;
     counter[interm_id]++;
 }
 

@@ -10,6 +10,7 @@
 #include "main.h"
 #include "enterprise.h"
 #include <unistd.h>
+#include <stdlib.h>
 
 
 /* 
@@ -22,33 +23,56 @@
 * can use other func in enterprise.h
 */
 int execute_enterprise(int enterp_id, struct comm_buffers* buffers, struct main_data* data){
-
-    int check = 1;
-
-    while (check == 1) {
-
-        int id = *(data->terminate);
-
-        if(id == -1) {
-            
+    int isEnding = *(data->terminate);
+    while (isEnding != 1) {
+        if(isEnding == -1) {
             printf("Error");
         }
+        else if(isEnding == 0) {
+            int *ptr = buffers->interm_enterp->ptrs;
+            struct operation *buff_ptr = buffers->interm_enterp->buffer;
 
-        else if(id == 0) {
-
-            enterprise_receive_operation(buffers->main_client->buffer, enterp_id, buffers, data);
+            for(int i = 0; i<(data->buffers_size); i++){
+                if(ptr[i]==1 && (buff_ptr[i].requested_enterp) == enterp_id){
+                    struct operation *op = calloc(1,sizeof(struct operation));
+                    enterprise_receive_operation(op, enterp_id, buffers, data);
+                    enterprise_process_operation(op, enterp_id, data, data->enterprise_stats);
+                    break;
+                }
+            }
         }
-
-        else if(id == 1) {
-
-            check = 0;
-        }
-
+        isEnding = *(data->terminate);
         sleep(1);
     }
+    return data->client_stats[enterp_id]; //remember the data?
+
+
+    // int check = 1;
+
+    // while (check == 1) {
+
+    //     int id = *(data->terminate);
+
+    //     if(id == -1) {
+            
+    //         printf("Error");
+    //     }
+
+    //     else if(id == 0) {
+
+    //         enterprise_receive_operation(buffers->main_client->buffer, enterp_id, buffers, data);
+    //     }
+
+    //     else if(id == 1) {
+
+    //         check = 0;
+    //     }
+
+    //     sleep(1);
+    // }
     
     
-    return data->enterprise_stats[enterp_id];
+    // return data->enterprise_stats[enterp_id];
 }
 
 
@@ -58,11 +82,8 @@ int execute_enterprise(int enterp_id, struct comm_buffers* buffers, struct main_
 * 
 */
 void enterprise_receive_operation(struct operation* op, int enterp_id, struct comm_buffers* buffers, struct main_data* data){
-
     if (*(data->terminate) != 1){
-
         read_interm_enterp_buffer(buffers->interm_enterp, enterp_id, data->buffers_size, op);
-        enterprise_process_operation(op, enterp_id, data, data->enterprise_stats);
     }
 }
 
@@ -74,26 +95,13 @@ void enterprise_receive_operation(struct operation* op, int enterp_id, struct co
 */
 void enterprise_process_operation(struct operation* op, int enterp_id, struct main_data* data, int* counter){
 
-    int ops = 0;
     int op_id = op->id;
-
-    for(int i = 0; i < (data->n_clients); i++) {
-
-        ops += data->client_stats[i];
-    }
-
-    if ((ops - 1) < (data->max_ops)) {
-        
+    if (op_id < (data->max_ops)) {
         op->status = 'E';
-    }
-
-    else {
-
+    }else {
         op->status = 'A';
     }
-
     op->receiving_enterp = enterp_id;
-    // data->results->receiving_enterp = enterp_id;
-    data->results[op_id] = *op;
+    data->results[op->id] = *op;
     counter[enterp_id]++;
 }
