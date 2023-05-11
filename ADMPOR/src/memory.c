@@ -120,7 +120,7 @@ void write_client_interm_buffer(struct circular_buffer *buffer, int buffer_size,
     struct operation *buffy = buffer->buffer;
     if (((in + 1) % buffer_size) == out)
     {
-        printf("itsfull\n");
+        printf("itsfull\n");//maybe it doesnt work for...... bkeg
 
     }else{
         buffy[in] = *op;
@@ -147,7 +147,25 @@ void write_interm_enterp_buffer(struct rnd_access_buffer *buffer, int buffer_siz
  */
 void read_main_client_buffer(struct rnd_access_buffer *buffer, int client_id, int buffer_size, struct operation *op)
 {
-    read_rnd_access_buffer(buffer, client_id, buffer_size, op);
+    // read_rnd_access_buffer(buffer, client_id, buffer_size, op);
+        // read_rnd_access_buffer(buffer, enterp_id, buffer_size, op);
+    int found = 0;
+    int *p = buffer->ptrs;
+    struct operation *ops = buffer->buffer;
+    for (int i = 0; i < buffer_size; i++)
+    {
+        if (p[i] == 1 && ops[i].requesting_client == client_id)
+        {
+            *op = ops[i]; 
+            p[i] = 0;
+            found = 1;
+            break;
+        }
+    }
+    if (!found)
+    {
+        op->id = -1;
+    }
 }
 
 /*
@@ -182,7 +200,24 @@ void read_client_interm_buffer(struct circular_buffer *buffer, int buffer_size, 
  */
 void read_interm_enterp_buffer(struct rnd_access_buffer *buffer, int enterp_id, int buffer_size, struct operation *op)
 {
-    read_rnd_access_buffer(buffer, enterp_id, buffer_size, op);
+    // read_rnd_access_buffer(buffer, enterp_id, buffer_size, op);
+    int found = 0;
+    int *p = buffer->ptrs;
+    struct operation *ops = buffer->buffer;
+    for (int i = 0; i < buffer_size; i++)
+    {
+        if (p[i] == 1 && ops[i].requested_enterp == enterp_id)
+        {
+            *op = ops[i];
+            p[i] = 0;
+            found = 1;
+            break;
+        }
+    }
+    if (!found)
+    {
+        op->id = -1;
+    }
 }
 
 void write_rnd_access_buffer(struct rnd_access_buffer *buffer, int buffer_size, struct operation *op)
@@ -199,6 +234,7 @@ void write_rnd_access_buffer(struct rnd_access_buffer *buffer, int buffer_size, 
     }
 }
 
+//deletable? unless replacement is found
 void read_rnd_access_buffer(struct rnd_access_buffer *buffer, int id, int buffer_size, struct operation *op)
 {
     int found = 0;
