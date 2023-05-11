@@ -29,18 +29,28 @@ int execute_enterprise(int enterp_id, struct comm_buffers* buffers, struct main_
             printf("Error");
         }
         else if(isEnding == 0) {
-            int *ptr = buffers->interm_enterp->ptrs;
-            struct operation *buff_ptr = buffers->interm_enterp->buffer;
-
-            for(int i = 0; i<(data->buffers_size); i++){
-                if(ptr[i]==1 && (buff_ptr[i].requested_enterp) == enterp_id){
-                    struct operation *op = calloc(1,sizeof(struct operation));
-                    enterprise_receive_operation(op, enterp_id, buffers, data);
-                    enterprise_process_operation(op, enterp_id, data, data->enterprise_stats);
-                    free(op);
-                    break;
-                }
+            // printf("we're in execute_enterprise!\n");
+            // int *ptr = buffers->interm_enterp->ptrs;
+            // struct operation *buff_ptr = buffers->interm_enterp->buffer;
+            struct operation *op = calloc(1,sizeof(struct operation));
+            enterprise_receive_operation(op, enterp_id, buffers, data);
+            // printf("eneteer\n");
+            if(op->id != -1){
+                printf("found, process in enterprise\n");
+                enterprise_process_operation(op, enterp_id, data, data->enterprise_stats);
             }
+            free(op);
+
+            // for(int i = 0; i<(data->buffers_size); i++){
+            //     if(ptr[i]==1 && (buff_ptr[i].requested_enterp) == enterp_id){
+            //         printf("hi hi hi\n");
+            //         struct operation *op = calloc(1,sizeof(struct operation));
+            //         enterprise_receive_operation(op, enterp_id, buffers, data);
+            //         enterprise_process_operation(op, enterp_id, data, data->enterprise_stats);
+            //         break;
+            //     }
+            //     free(op);
+            // }
         }
         isEnding = *(data->terminate);
         sleep(1);

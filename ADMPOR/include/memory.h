@@ -15,7 +15,7 @@
 struct pointers { 																					
 	int in;  																						
 	int out; 																						
-};																								
+};														
 
 //estrutura que representa um buffer circular
 struct circular_buffer { 	
@@ -34,7 +34,7 @@ struct rnd_access_buffer {
 struct operation {
 	int id; 					//id da operação
 	int requesting_client;		//id do cliente que fez o pedido
-	int requested_enterp;		//id da empresa pretendida
+	int requested_enterp;			//id da empresa pretendida
 		
 	char status;				//estado da operação
 	int receiving_client;		//id do cliente que recebeu pedido

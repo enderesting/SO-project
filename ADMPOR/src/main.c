@@ -180,13 +180,13 @@ void read_status(struct main_data* data){
     int id;
     scanf("%d", &id);
 
+    // printf("%c\n", data->results[id].status);  
     if(data->results[id].status == '\0') {
 
         //printf("%c\n", data->results[id].status);
         //printf("%d\n", data->results[id].receiving_client);
         printf("Pedido %d ainda não é válido\n", id);
     }
-
     else if(0<=id && id<(data->max_ops)){
         for(int i = 0; i<data->max_ops; i++){
             if(data->results[i].id == id){
@@ -220,8 +220,10 @@ void read_status(struct main_data* data){
 * use other main.h aux funcs
 */
 void stop_execution(struct main_data* data, struct comm_buffers* buffers){
-
+    // printf("terminate: %d \n", *data->terminate);
     *data->terminate = 1;
+    // printf("terminate: %d \n", *data->terminate);
+    // printf("getting out of it"); // this is only triggered AFTER the various process printed out their thing...
     wait_processes(data);
     write_statistics(data);
     destroy_memory_buffers(data, buffers);
@@ -277,7 +279,7 @@ void destroy_memory_buffers(struct main_data* data, struct comm_buffers* buffers
 
     int intSize = sizeof(int);
     destroy_shared_memory(STR_SHM_MAIN_CLIENT_PTR, buffers->main_client, buffSize*intSize);
-    destroy_shared_memory(STR_SHM_CLIENT_INTERM_PTR, buffers->client_interm, buffSize*intSize);
+    destroy_shared_memory(STR_SHM_CLIENT_INTERM_PTR, buffers->client_interm, buffSize*sizeof(struct pointers));
     destroy_shared_memory(STR_SHM_INTERM_ENTERP_PTR, buffers->interm_enterp, buffSize*intSize);
 
     destroy_shared_memory(STR_SHM_RESULTS, data->results, (data->max_ops)*opSize);

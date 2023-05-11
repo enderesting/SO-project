@@ -29,20 +29,31 @@ int execute_client(int client_id, struct comm_buffers* buffers, struct main_data
             printf("Error");
         }
         else if(isEnding == 0) {
-            int *ptr = buffers->main_client->ptrs;
-            struct operation *buff_ptr = buffers->main_client->buffer;
-
-            for(int i = 0; i<(data->buffers_size); i++){
-                if(ptr[i]==1 && (buff_ptr[i].requesting_client) == client_id){
-                    //printf("HEY I'M HERE 2\n");
-                    struct operation *op = calloc(1,sizeof(struct operation));
-                    client_get_operation(op, client_id, buffers, data);
-                    client_process_operation(op, client_id, data, data->client_stats);
-                    client_send_operation(op, buffers, data);
-                    free(op);
-                    break;
-                }
+            // printf("we're in execute_client!\n");
+            // int *ptr = buffers->main_client->ptrs;
+            struct operation *op = calloc(1,sizeof(struct operation));
+            client_get_operation(op, client_id, buffers, data);
+            // printf("clien\n");
+            if(op->id !=-1){
+                printf("found, process in client\n");
+                client_process_operation(op, client_id, data, data->client_stats);
+                client_send_operation(op, buffers, data);
             }
+            free(op);
+
+            // for(int i = 0; i<(data->buffers_size); i++){
+            //     if(ptr[i]==1 && (buff_ptr[i].requesting_client) == client_id){
+            //         printf("hi weve found him. processing now\n");
+            //         //printf("HEY I'M HERE 2\n");
+            //         struct operation *op = calloc(1,sizeof(struct operation));
+            //         client_get_operation(op, client_id, buffers, data);
+            //         client_process_operation(op, client_id, data, data->client_stats);
+            //         client_send_operation(op, buffers, data);
+            //         free(op);
+            //         // break;
+            //         ptr[i]=0;
+            //     }
+            // }
         }
         isEnding = *(data->terminate);
         sleep(1);

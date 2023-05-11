@@ -116,18 +116,20 @@ void write_client_interm_buffer(struct circular_buffer *buffer, int buffer_size,
 {
     struct pointers *p = buffer->ptrs;
     int in = p->in;
-    int out = p->in;
-    struct operation *ops = buffer->buffer;
-
-    if (((in + 1) % buffer_size) != out)
+    int out = p->out;
+    struct operation *buffy = buffer->buffer;
+    if (((in + 1) % buffer_size) == out)
     {
-        *(ops + in) = *op;
-        in = (in + 1) % buffer_size;
+        printf("itsfull\n");
+
+    }else{
+        buffy[in] = *op;
+        p->in = (in + 1) % buffer_size;
     }
+    // printf("hhh");
 }
 
 /*
- * func that
  * func that writes a operation in shared memory buffer (intermediaries & companies)
  * op. should be on a free buffer space. no space? write nothing.
  * be careful of buffer type + buffer writing rules.
@@ -145,7 +147,7 @@ void write_interm_enterp_buffer(struct rnd_access_buffer *buffer, int buffer_siz
  */
 void read_main_client_buffer(struct rnd_access_buffer *buffer, int client_id, int buffer_size, struct operation *op)
 {
-    read_rnd_access_buffer(buffer, buffer_size, client_id, op);
+    read_rnd_access_buffer(buffer, client_id, buffer_size, op);
 }
 
 /*
@@ -158,18 +160,18 @@ void read_client_interm_buffer(struct circular_buffer *buffer, int buffer_size, 
 {
     struct pointers *p = buffer->ptrs;
     int in = p->in;
-    int out = p->in;
+    int out = p->out;
     struct operation *ops = buffer->buffer;
-
-    if (in == out)
-    {
+    if (in == out){
+        // printf("it empty\n");
         op->id = -1;
+    }else{ //how do i circular buffer
+            *op = *(ops + out);
+            p->out = (out + 1) % buffer_size;
     }
-    else
-    {
-        *op = *(ops + out);
-        out = (out + 1) % buffer_size;
-    }
+    // if (op->status == '\0'){//if op not availabe. its -1
+    //     op->id = -1;
+    // }
 }
 
 /*
@@ -180,19 +182,18 @@ void read_client_interm_buffer(struct circular_buffer *buffer, int buffer_size, 
  */
 void read_interm_enterp_buffer(struct rnd_access_buffer *buffer, int enterp_id, int buffer_size, struct operation *op)
 {
-    read_rnd_access_buffer(buffer, buffer_size, enterp_id, op);
+    read_rnd_access_buffer(buffer, enterp_id, buffer_size, op);
 }
 
 void write_rnd_access_buffer(struct rnd_access_buffer *buffer, int buffer_size, struct operation *op)
 {
     int *ptr = buffer->ptrs;
     struct operation *buffer_ptr = buffer->buffer;
-    for (int i = 0; i < buffer_size; i++)
-    {
-        if (ptr[i] == 0)
-        {
+    for (int i = 0; i < buffer_size; i++){
+        if (ptr[i] == 0){
             ptr[i] = 1;
             buffer_ptr[i] = *op;
+            // printf("op id: %c\n",buffer_ptr[i].status);
             break;
         }
     }
@@ -205,10 +206,10 @@ void read_rnd_access_buffer(struct rnd_access_buffer *buffer, int id, int buffer
     struct operation *ops = buffer->buffer;
     for (int i = 0; i < buffer_size; i++)
     {
-        if (*(p + i) == 1 && (ops + i)->id == id)
+        if (p[i] == 1 && ops[i].id == id)
         {
-            *op = *(ops + i);
-            *(p + i) = 0;
+            *op = ops[i]; //HOW THE FUCK DO YOU PUT THIS TO OP??????
+            p[i] = 0;
             found = 1;
             break;
         }

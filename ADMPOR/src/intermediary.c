@@ -29,13 +29,15 @@ int execute_intermediary(int interm_id, struct comm_buffers *buffers, struct mai
             printf("Error");
         }
         else if(isEnding == 0) {
+            // printf("we're in execute_interm!\n");
                     struct operation *op = calloc(1,sizeof(struct operation));
                     intermediary_receive_operation(op, buffers, data);
+                    // printf("interm\n");
                     if (op->id != -1){
+                        printf("found, process in interm \n"); // its in here somehow
                         intermediary_process_operation(op, interm_id, data, data->intermediary_stats);
                         intermediary_send_answer(op, buffers, data);    
                     }
-
                     free(op);
         }
         isEnding = *(data->terminate);
