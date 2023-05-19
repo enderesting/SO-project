@@ -9,6 +9,7 @@
 #include "memory-private.h"
 #include "main.h"
 #include "enterprise.h"
+#include "synchronization.h"
 #include <unistd.h>
 #include <stdlib.h>
 
@@ -22,7 +23,7 @@
     if (id == 1) -> order was given to terminate the program, return the number of processed operations
 * can use other func in enterprise.h
 */
-int execute_enterprise(int enterp_id, struct comm_buffers* buffers, struct main_data* data){
+int execute_enterprise(int enterp_id, struct comm_buffers* buffers, struct main_data* data, struct semaphores* sems){
     int isEnding = *(data->terminate);
     while (isEnding != 1) {
         if(isEnding == -1) {
@@ -33,11 +34,11 @@ int execute_enterprise(int enterp_id, struct comm_buffers* buffers, struct main_
             // int *ptr = buffers->interm_enterp->ptrs;
             // struct operation *buff_ptr = buffers->interm_enterp->buffer;
             struct operation *op = calloc(1,sizeof(struct operation));
-            enterprise_receive_operation(op, enterp_id, buffers, data);
+            enterprise_receive_operation(op, enterp_id, buffers, data, sems);
             // printf("eneteer\n");
             if(op->id != -1){
                 printf("found, process in enterprise\n");
-                enterprise_process_operation(op, enterp_id, data, data->enterprise_stats);
+                enterprise_process_operation(op, enterp_id, data, data->enterprise_stats, sems);
             }
             free(op);
 
@@ -92,7 +93,7 @@ int execute_enterprise(int enterp_id, struct comm_buffers* buffers, struct main_
 * before reading, check if (data->terminate == 1) -> immediately return function
 * 
 */
-void enterprise_receive_operation(struct operation* op, int enterp_id, struct comm_buffers* buffers, struct main_data* data){
+void enterprise_receive_operation(struct operation* op, int enterp_id, struct comm_buffers* buffers, struct main_data* data, struct semaphores* sems){
     if (*(data->terminate) != 1){
         read_interm_enterp_buffer(buffers->interm_enterp, enterp_id, data->buffers_size, op);
     }
@@ -104,7 +105,7 @@ void enterprise_receive_operation(struct operation* op, int enterp_id, struct co
 * change the state to 'E' or 'A' depending on num of max op. reached.
 * op. counter++. updates the operation in data structure
 */
-void enterprise_process_operation(struct operation* op, int enterp_id, struct main_data* data, int* counter){
+void enterprise_process_operation(struct operation* op, int enterp_id, struct main_data* data, int* counter, struct semaphores* sems){
 
     int op_id = op->id;
     if (op_id < (data->max_ops)) {

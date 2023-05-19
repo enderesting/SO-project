@@ -11,6 +11,8 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <string.h>
+#include <synchronization.h>
+#include <time.h>
 #include "main.h"
 #include "memory-private.h"
 

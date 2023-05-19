@@ -81,7 +81,7 @@ void create_shared_memory_buffers(struct main_data* data, struct comm_buffers* b
 * func that iniciates client/interm/company processes. you can use launch_*
 * store the pids in its respective arrays in data structure
 */
-void launch_processes(struct comm_buffers* buffers, struct main_data* data){
+void launch_processes(struct comm_buffers* buffers, struct main_data* data, struct semaphores* sems){
     for(int i = 0; i<(data->n_clients); i++){
         int pid = launch_client(i,buffers,data);
         data->client_pids[i] = pid;
@@ -101,7 +101,7 @@ void launch_processes(struct comm_buffers* buffers, struct main_data* data){
 /*
 * user interact func to receive 4 commands
 */
-void user_interaction(struct comm_buffers* buffers, struct main_data* data){
+void user_interaction(struct comm_buffers* buffers, struct main_data* data, struct semaphores* sems){
     int check = 1;
     int* op_counter = calloc(1,sizeof(int));
     printf("Ações disponíveis:\n");
@@ -143,7 +143,7 @@ void user_interaction(struct comm_buffers* buffers, struct main_data* data){
 * write op in the memory buffer shared between main and clients. print operation ip and op_counter++
 * never create more opertation than the size of array data->results.
 */
-void create_request(int* op_counter, struct comm_buffers* buffers, struct main_data* data){
+void create_request(int* op_counter, struct comm_buffers* buffers, struct main_data* data, struct semaphores* sems){
     int opCount = *op_counter;
     int client,empresa;
     scanf(" %d %d", &client, &empresa);
@@ -176,7 +176,7 @@ void create_request(int* op_counter, struct comm_buffers* buffers, struct main_d
 * client interm company id that received and processed
 * no -> ??????
 */
-void read_status(struct main_data* data){
+void read_status(struct main_data* data, struct semaphores* sems){
     int id;
     scanf("%d", &id);
 
@@ -219,7 +219,7 @@ void read_status(struct main_data* data){
 * write stats at end of program. free reserved shared/dynamic memory
 * use other main.h aux funcs
 */
-void stop_execution(struct main_data* data, struct comm_buffers* buffers){
+void stop_execution(struct main_data* data, struct comm_buffers* buffers, struct semaphores* sems){
     // printf("terminate: %d \n", *data->terminate);
     *data->terminate = 1;
     // printf("terminate: %d \n", *data->terminate);
@@ -233,7 +233,7 @@ void stop_execution(struct main_data* data, struct comm_buffers* buffers){
 /* 
 * waits all processes to end, using wait_process do process.h
 */
-void wait_processes(struct main_data* data){
+void wait_processes(struct main_data* data, struct semaphores* sems){
 
     for(int i = 0; i < (data->n_clients); i++){
 
@@ -244,7 +244,7 @@ void wait_processes(struct main_data* data){
 /*
 * func that prints AdmPor final stats aka how many process processed by everyone.
 */
-void write_statistics(struct main_data* data){
+void write_statistics(struct main_data* data, struct semaphores* sems){
 
     printf("Terminando o AdmPor! Imprimindo estatísticas:\n");
 
@@ -267,7 +267,7 @@ void write_statistics(struct main_data* data){
 /*
 * func that frees all buffers of dynamic/shared memory in data struct
 */
-void destroy_memory_buffers(struct main_data* data, struct comm_buffers* buffers){
+void destroy_memory_buffers(struct main_data* data, struct comm_buffers* buffers, struct semaphores* sems){
     
     int buffSize = data->buffers_size;
     size_t opSize = sizeof(struct operation);
