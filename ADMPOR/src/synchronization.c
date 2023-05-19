@@ -15,8 +15,15 @@ sem_t * semaphore_create(char* name, int value){
 */
 void semaphore_destroy(char* name, sem_t* semaphore){
 
-    sem_close(semaphore);
-    sem_unlink(name);
+    int r1 = sem_close(semaphore);
+    int r2 = sem_unlink(name);
+    
+    if(r1 == -1){
+        "Closing semaphores failed.\n";
+    }
+    if(r2== -1){
+        "Unlinking semaphores failed.\n";
+    }
 }
 
 /* Função que inicia o processo de produzir, fazendo sem_wait nos semáforos

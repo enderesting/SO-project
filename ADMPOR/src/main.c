@@ -10,7 +10,7 @@
 #include "main.h"
 #include "process.h"
 #include <unistd.h>
-
+#include <synchronization.h>
 
 
 
@@ -83,17 +83,17 @@ void create_shared_memory_buffers(struct main_data* data, struct comm_buffers* b
 */
 void launch_processes(struct comm_buffers* buffers, struct main_data* data, struct semaphores* sems){
     for(int i = 0; i<(data->n_clients); i++){
-        int pid = launch_client(i,buffers,data);
+        int pid = launch_client(i,buffers,data,sems);
         data->client_pids[i] = pid;
     }
 
     for(int i = 0; i<(data->n_intermediaries); i++){
-        int pid = launch_interm(i,buffers,data);
+        int pid = launch_interm(i,buffers,data,sems);
         data->intermediary_pids[i] = pid;
     }
 
     for(int i = 0; i<(data->n_enterprises); i++){
-        int pid = launch_enterp(i,buffers,data);
+        int pid = launch_enterp(i,buffers,data,sems);
         data->enterprise_pids[i] = pid;
     }
 }
@@ -117,11 +117,11 @@ void user_interaction(struct comm_buffers* buffers, struct main_data* data, stru
         scanf("%s",cmd);
         
         if(strcmp(cmd,"op")==0){ //also a pointer
-            create_request(op_counter,buffers,data); // supposed to be a pointer
+            create_request(op_counter,buffers,data,sems); // supposed to be a pointer
         }else if(strcmp(cmd,"status")==0){
-            read_status(data);
+            read_status(data,sems);
         }else if(strcmp(cmd,"stop")==0){
-            stop_execution(data,buffers);
+            stop_execution(data,buffers,sems);
             check = 0;
         }else if(strcmp(cmd,"help") == 0){
             printf("Ações disponíveis:\n");
@@ -166,7 +166,7 @@ void create_request(int* op_counter, struct comm_buffers* buffers, struct main_d
         free(op_ptr);
     }else{
         printf("O número máximo dee operação já foi atingido.\n");
-        stop_execution(data,buffers);
+        stop_execution(data,buffers,sems);
     }
 }
 
@@ -233,7 +233,7 @@ void stop_execution(struct main_data* data, struct comm_buffers* buffers, struct
 /* 
 * waits all processes to end, using wait_process do process.h
 */
-void wait_processes(struct main_data* data, struct semaphores* sems){
+void wait_processes(struct main_data* data){
 
     for(int i = 0; i < (data->n_clients); i++){
 
@@ -244,7 +244,7 @@ void wait_processes(struct main_data* data, struct semaphores* sems){
 /*
 * func that prints AdmPor final stats aka how many process processed by everyone.
 */
-void write_statistics(struct main_data* data, struct semaphores* sems){
+void write_statistics(struct main_data* data){
 
     printf("Terminando o AdmPor! Imprimindo estatísticas:\n");
 
@@ -267,7 +267,7 @@ void write_statistics(struct main_data* data, struct semaphores* sems){
 /*
 * func that frees all buffers of dynamic/shared memory in data struct
 */
-void destroy_memory_buffers(struct main_data* data, struct comm_buffers* buffers, struct semaphores* sems){
+void destroy_memory_buffers(struct main_data* data, struct comm_buffers* buffers){
     
     int buffSize = data->buffers_size;
     size_t opSize = sizeof(struct operation);
@@ -295,6 +295,43 @@ void destroy_memory_buffers(struct main_data* data, struct comm_buffers* buffers
     printf("finished the massacre");
 }
 
+void create_semaphores(struct main_data* data, struct semaphores* sems){
+    int buffer = data->buffers_size;
+    //main <-> client
+    sems->main_client->empty = semaphore_create(STR_SEM_MAIN_CLIENT_EMPTY,buffer);
+    sems->main_client->full = semaphore_create(STR_SEM_MAIN_CLIENT_FULL,0);
+    sems->main_client->mutex = semaphore_create(STR_SEM_MAIN_CLIENT_MUTEX,1);
+    //client <-> interm
+    sems->client_interm->empty = semaphore_create(STR_SEM_CLIENT_INTERM_EMPTY,buffer);
+    sems->client_interm->full = semaphore_create(STR_SEM_CLIENT_INTERM_FULL,0);
+    sems->client_interm->mutex = semaphore_create(STR_SEM_CLIENT_INTERM_MUTEX,1);
+    //interm <-> empty  
+    sems->interm_enterp->empty = semaphore_create(STR_SEM_INTERM_ENTERP_EMPTY,buffer);
+    sems->interm_enterp->full = semaphore_create(STR_SEM_INTERM_ENTERP_FULL,0);
+    sems->interm_enterp->mutex = semaphore_create(STR_SEM_INTERM_ENTERP_MUTEX,1); 
+    //results_mutex
+    sems->results_mutex = semaphore_create(STR_SEM_RESULTS_MUTEX,1); 
+}
+
+void wakeup_processes(struct main_data* data, struct semaphores* sems){
+
+}
+void destroy_semaphores(struct semaphores* sems){
+    //main <-> client
+    semaphore_destroy(STR_SEM_MAIN_CLIENT_EMPTY,sems->main_client->empty);
+    semaphore_destroy(STR_SEM_MAIN_CLIENT_FULL,sems->main_client->full);
+    semaphore_destroy(STR_SEM_MAIN_CLIENT_MUTEX,sems->main_client->mutex);
+    //client <-> interm
+    semaphore_destroy(STR_SEM_CLIENT_INTERM_EMPTY,sems->client_interm->empty);
+    semaphore_destroy(STR_SEM_CLIENT_INTERM_FULL,sems->client_interm->full);
+    semaphore_destroy(STR_SEM_CLIENT_INTERM_MUTEX,sems->client_interm->mutex);
+    //interm <-> empty  
+    semaphore_destroy(STR_SEM_INTERM_ENTERP_EMPTY,sems->interm_enterp->empty);
+    semaphore_destroy(STR_SEM_INTERM_ENTERP_FULL,sems->interm_enterp->full);
+    semaphore_destroy(STR_SEM_INTERM_ENTERP_MUTEX,sems->interm_enterp->mutex); 
+    //results_mutex
+    semaphore_destroy(STR_SEM_RESULTS_MUTEX,sems->results_mutex); 
+}
 
 
 int main(int argc, char *argv[]) {
@@ -304,12 +341,15 @@ int main(int argc, char *argv[]) {
     buffers->main_client = create_dynamic_memory(sizeof(struct rnd_access_buffer));
     buffers->client_interm = create_dynamic_memory(sizeof(struct circular_buffer));
     buffers->interm_enterp = create_dynamic_memory(sizeof(struct rnd_access_buffer));
+    //make them sems
+    struct semaphores* sems = create_dynamic_memory(sizeof(struct semaphores));
+    create_semaphores(data,sems);
     //execute main code
     main_args(argc, argv, data);
     create_dynamic_memory_buffers(data);
     create_shared_memory_buffers(data, buffers);
-    launch_processes(buffers, data);
-    user_interaction(buffers, data);
+    launch_processes(buffers, data,sems);
+    user_interaction(buffers, data,sems);
     //release memory before terminating
     destroy_dynamic_memory(data);
     destroy_dynamic_memory(buffers);
