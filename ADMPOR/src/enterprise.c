@@ -38,7 +38,7 @@ int execute_enterprise(int enterp_id, struct comm_buffers* buffers, struct main_
             enterprise_receive_operation(op, enterp_id, buffers, data, sems);
             // printf("eneteer\n");
             if(op->id != -1){
-                printf("found, process in enterprise\n");
+                // printf("found, process in enterprise\n");
                 enterprise_process_operation(op, enterp_id, data, data->enterprise_stats, sems);
             }
             free(op);
@@ -58,7 +58,7 @@ int execute_enterprise(int enterp_id, struct comm_buffers* buffers, struct main_
 void enterprise_receive_operation(struct operation* op, int enterp_id, struct comm_buffers* buffers, struct main_data* data, struct semaphores* sems){
     if (*(data->terminate) != 1){
         consume_begin(sems->interm_enterp);
-        printf("Reading: Interm-Enterp\n");
+        // printf("Reading: Interm-Enterp\n");
         read_interm_enterp_buffer(buffers->interm_enterp, enterp_id, data->buffers_size, op);
         consume_end(sems->interm_enterp);
         // printf("Reading: Interm-Enterp DONE!\n");

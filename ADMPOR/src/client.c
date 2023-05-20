@@ -37,7 +37,7 @@ int execute_client(int client_id, struct comm_buffers* buffers, struct main_data
             client_get_operation(op, client_id, buffers, data, sems);
             // printf("clien\n");
             if(op->id !=-1){
-                printf("found, process in client\n");
+                // printf("found, process in client\n");
                 client_process_operation(op, client_id, data, data->client_stats,sems);
                 client_send_operation(op, buffers, data, sems);
             }
@@ -57,7 +57,7 @@ void client_get_operation(struct operation* op, int client_id, struct comm_buffe
 
     if (*(data->terminate) != 1){
         consume_begin(sems->main_client);
-        printf("Reading: Main-Client\n");
+        // printf("Reading: Main-Client\n");
         //?????? it doesnt go any further???
         read_main_client_buffer(buffers->main_client, client_id, data->buffers_size, op);
         consume_end(sems->main_client);

@@ -36,7 +36,7 @@ int execute_intermediary(int interm_id, struct comm_buffers *buffers, struct mai
                     intermediary_receive_operation(op, buffers, data, sems);
                     // printf("interm\n");
                     if (op->id != -1){
-                        printf("found, process in interm \n"); // its in here somehow
+                        // printf("found, process in interm \n"); // its in here somehow
                         intermediary_process_operation(op, interm_id, data, data->intermediary_stats, sems);
                         intermediary_send_answer(op, buffers, data, sems);    
                     }
@@ -55,7 +55,7 @@ void intermediary_receive_operation(struct operation *op, struct comm_buffers *b
 {
     if (*(data->terminate) != 1){
         consume_begin(sems->client_interm);
-        printf("Reading: Client-Interm\n");
+        // printf("Reading: Client-Interm\n");
         read_client_interm_buffer(buffers->client_interm, data->buffers_size, op);
         consume_end(sems->client_interm);
         // printf("Reading: Client-Interm DONE!\n");

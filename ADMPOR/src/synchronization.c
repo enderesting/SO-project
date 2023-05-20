@@ -14,25 +14,28 @@
 */
 sem_t * semaphore_create(char* name, int value){
     sem_t* sem;
-    uid_t uid = getuid();
-    int length = strlen(name);
-    int new_length = length+11;
-    char* new_ptr = malloc(new_length*sizeof(char));
-    sprintf(new_ptr,"%s%d",name,uid);
+    // uid_t uid = getuid();
+    // int length = strlen(name);
+    // int new_length = length+11;
+    // char* new_ptr = calloc(1,new_length*sizeof(char));
+    // sprintf(new_ptr,"%s%d",name,uid);
 
-    sem = sem_open(new_ptr, O_CREAT, 00600, value);
+    // sem = sem_open(new_ptr, O_CREAT, 00600, value);
 
-    // sem = sem_open(name, O_CREAT|O_EXCL, 00600, value);
+    sem = sem_open(name, O_CREAT|O_EXCL, 00600, value);
     
-    // if(sem == SEM_FAILED){
-    //     if(errno == EEXIST){ //already exists, close first
-    //         sem_close(sem); //returns -1 but it works anyways??
-    //         perror("sem_close"); //come back later
-    //         sem = sem_open(name, O_CREAT, 00600, value); //create a new one w/ value
-    //     }else{
-    //         perror("sem_open");
-    //     }
-    // }
+    if(sem == SEM_FAILED){
+        if(errno == EEXIST){ //already exists, close first
+            sem_close(sem); //returns -1 but it works anyways??
+            sem_unlink(name);
+            sem = sem_open(name, O_CREAT, 00600, value); //create a new one w/ value
+        }else{
+            perror("sem_open");
+        }
+    }
+
+    int v;
+    sem_getvalue(sem,&v);
     return sem;
 }
 

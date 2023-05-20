@@ -205,7 +205,9 @@ void create_request(int *op_counter, struct comm_buffers *buffers, struct main_d
         op_ptr->enterp_time = e;
 
         // write in main-client buffer
+        produce_begin(sems->main_client);
         write_main_client_buffer(buffers->main_client, data->buffers_size, op_ptr); // happens right after here
+        produce_end(sems->main_client);
         printf("O pedido #%d foi criado!\n", opCount);
         *op_counter = opCount + 1;
         // op_counter_pointer
@@ -231,7 +233,7 @@ void read_status(struct main_data *data, struct semaphores *sems)
     
     semaphore_mutex_lock(sems->results_mutex);
     struct operation* op = &(data->results[id]);
-    semaphore_mutex_lock(sems->results_mutex);
+    semaphore_mutex_unlock(sems->results_mutex);
 
     if(op->status == '\0'){
         // printf("%c\n", data->results[id].status);
