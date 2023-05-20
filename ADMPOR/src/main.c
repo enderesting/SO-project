@@ -42,7 +42,7 @@ void main_args(int argc, char *argv[], struct main_data *data)
         printf("%d\n", data->n_enterprises);
         //printf("%c\n", data->log_filename);
         //printf("%c\n", data->statistics_filename);
-        printf("%d\n", data->alarm_time);
+        //printf("%d\n", *data->alarm_time);
     }
     else
     {
@@ -343,9 +343,9 @@ void destroy_memory_buffers(struct main_data *data, struct comm_buffers *buffers
     size_t opSize = sizeof(struct operation);
 
     // destroying shared memory
-    destroy_shared_memory(&STR_SHM_INTERM_ENTERP_BUFFER, buffers->interm_enterp->buffer, buffSize * opSize); // bug here
-    destroy_shared_memory(&STR_SHM_CLIENT_INTERM_BUFFER, buffers->client_interm->buffer, buffSize * opSize);
-    destroy_shared_memory(&STR_SHM_MAIN_CLIENT_BUFFER, buffers->main_client->buffer, buffSize * opSize);
+    destroy_shared_memory(STR_SHM_INTERM_ENTERP_BUFFER, buffers->interm_enterp->buffer, buffSize * opSize); // bug here
+    destroy_shared_memory(STR_SHM_CLIENT_INTERM_BUFFER, buffers->client_interm->buffer, buffSize * opSize);
+    destroy_shared_memory(STR_SHM_MAIN_CLIENT_BUFFER, buffers->main_client->buffer, buffSize * opSize);
 
     int intSize = sizeof(int);
     destroy_shared_memory(STR_SHM_MAIN_CLIENT_PTR, buffers->main_client->ptrs, buffSize * intSize);
@@ -404,7 +404,6 @@ void wakeup_processes(struct main_data *data, struct semaphores *sems)
     produce_end(sems->client_interm);
     produce_end(sems->interm_enterp);
     semaphore_mutex_unlock(sems->results_mutex);
-
 }
 
 void destroy_semaphores(struct semaphores *sems)

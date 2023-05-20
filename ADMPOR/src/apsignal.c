@@ -1,3 +1,4 @@
+#include <unistd.h>
 #include "apsignal.h"
 #include "main.h"
 
@@ -17,7 +18,7 @@ void write_alarm()
 {
     while (1)
     {
-        sleep(data->alarm_time);
+        sleep(*data->alarm_time);
         for (int i = 0; i < data->max_ops; i++)
         {
             struct operation next = data->results[i];
