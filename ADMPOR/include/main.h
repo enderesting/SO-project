@@ -3,6 +3,12 @@
 
 #include "memory.h"
 #include "synchronization.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+#include <ctype.h>
+
 
 
 //Estrutura que agrega a informação necessária pela main do AdmPor.
@@ -21,6 +27,10 @@ struct main_data {
 	int* client_stats;			//nº de operações encaminhadas por cada clientes
 	int* intermediary_stats;	//nº de operações respondidas por cada intermediário
 	int* enterprise_stats;		//nº de operações recebidas por cada empresa
+
+	FILE* log_filename;         //nome do ficheiro de log
+	FILE* statistics_filename;  //nome do ficheiro de estatísticas
+	int* alarm_time;            //temporização para o alarme
 	
 	struct operation* results;	//array com histórico de ops executadas
 	
