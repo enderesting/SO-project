@@ -4,7 +4,7 @@
 
 void log_op (struct main_data* data, int client, int enterp);
 
-void log_status (struct main_data* data, int op);
+void log_status (struct main_data* data, int num);
 
 void log_help (struct main_data* data);
 

@@ -185,6 +185,7 @@ void create_request(int *op_counter, struct comm_buffers *buffers, struct main_d
     int opCount = *op_counter;
     int client, empresa;
     scanf(" %d %d", &client, &empresa);
+    log_op(data, client, empresa);
     if (opCount < (data->max_ops))
     {
         // create op
@@ -228,6 +229,7 @@ void read_status(struct main_data *data, struct semaphores *sems)
 {
     int id;
     scanf("%d", &id);
+    log_status(data, id);
     
     semaphore_mutex_lock(sems->results_mutex);
     struct operation* op = &(data->results[id]);
@@ -394,6 +396,7 @@ void create_semaphores(struct main_data *data, struct semaphores *sems)
 void wakeup_processes(struct main_data *data, struct semaphores *sems)
 {
 }
+
 void destroy_semaphores(struct semaphores *sems)
 {
     // main <-> client
