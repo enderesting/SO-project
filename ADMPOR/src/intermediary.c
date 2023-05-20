@@ -11,6 +11,7 @@
 #include "synchronization.h"
 #include <unistd.h>
 #include <stdlib.h>
+#include "aptime.h"
 
 
 /*
@@ -57,6 +58,7 @@ void intermediary_receive_operation(struct operation *op, struct comm_buffers *b
         consume_begin(sems->client_interm);
         read_client_interm_buffer(buffers->client_interm, data->buffers_size, op);
         consume_end(sems->client_interm);
+        op->intermed_time = get_time();
     }
 }
 

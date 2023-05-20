@@ -12,6 +12,7 @@
 #include "synchronization.h"
 #include <unistd.h>
 #include <stdlib.h>
+#include "aptime.h"
 
 
 /* 
@@ -60,6 +61,7 @@ void enterprise_receive_operation(struct operation* op, int enterp_id, struct co
         consume_begin(sems->interm_enterp);
         read_interm_enterp_buffer(buffers->interm_enterp, enterp_id, data->buffers_size, op);
         consume_end(sems->interm_enterp);
+        op->enterp_time = get_time();
     }
 }
 

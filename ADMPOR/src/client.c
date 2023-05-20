@@ -12,6 +12,7 @@
 #include "synchronization.h"
 #include <unistd.h>
 #include <stdlib.h>
+#include "aptime.h"
 
 
 /* 
@@ -59,6 +60,7 @@ void client_get_operation(struct operation* op, int client_id, struct comm_buffe
         consume_begin(sems->main_client);
         read_main_client_buffer(buffers->main_client, client_id, data->buffers_size, op);
         consume_end(sems->main_client);
+        op->client_time = get_time();
     }
 }
 
