@@ -16,6 +16,7 @@
 #include "apsignal.h"
 #include "synchronization.h"
 #include "aptime.h"
+#include "log.h"
 
 struct main_data ata = {0};
 struct comm_buffers uffers = {0};
@@ -149,11 +150,15 @@ void user_interaction(struct comm_buffers *buffers, struct main_data *data, stru
         }
         else if (strcmp(cmd, "stop") == 0)
         {
+            log_stop(data);
+            fclose(data->log_filename);
+            fclose(data->statistics_filename);
             stop_execution(data, buffers, sems);
             check = 0;
         }
         else if (strcmp(cmd, "help") == 0)
         {
+            log_help(data);
             printf("Ações disponíveis:\n");
             printf("        op cliente empresa - criar uma nova operação\n");
             printf("        status id - consultar o estado de uma operação\n");
