@@ -41,20 +41,6 @@ int execute_client(int client_id, struct comm_buffers* buffers, struct main_data
                 client_send_operation(op, buffers, data, sems);
             }
             free(op);
-
-            // for(int i = 0; i<(data->buffers_size); i++){
-            //     if(ptr[i]==1 && (buff_ptr[i].requesting_client) == client_id){
-            //         printf("hi weve found him. processing now\n");
-            //         //printf("HEY I'M HERE 2\n");
-            //         struct operation *op = calloc(1,sizeof(struct operation));
-            //         client_get_operation(op, client_id, buffers, data);
-            //         client_process_operation(op, client_id, data, data->client_stats);
-            //         client_send_operation(op, buffers, data);
-            //         free(op);
-            //         // break;
-            //         ptr[i]=0;
-            //     }
-            // }
         }
         isEnding = *(data->terminate);
         sleep(1);
@@ -70,7 +56,9 @@ int execute_client(int client_id, struct comm_buffers* buffers, struct main_data
 void client_get_operation(struct operation* op, int client_id, struct comm_buffers* buffers, struct main_data* data, struct semaphores* sems){
 
     if (*(data->terminate) != 1){
+        consume_begin(sems->main_client);
         read_main_client_buffer(buffers->main_client, client_id, data->buffers_size, op);
+        consume_end(sems->main_client);
     }
 }
 
@@ -84,7 +72,9 @@ void client_process_operation(struct operation* op, int client_id, struct main_d
     //printf("HEY I'M HERE\n");
     op->receiving_client = client_id;
     op->status = 'C';
+    semaphore_mutex_lock(sems->results_mutex);
     data->results[op->id] = *op; // <-- i wonder if we should change each stat individually instead
+    semaphore_mutex_unlock(sems->results_mutex);
     counter[client_id]++;
 }
 
@@ -92,5 +82,7 @@ void client_process_operation(struct operation* op, int client_id, struct main_d
 * func that writes an operation in buffer mem shared between clients and intermed.
 */
 void client_send_operation(struct operation* op, struct comm_buffers* buffers, struct main_data* data, struct semaphores* sems){
+    produce_begin(sems->client_interm);
     write_client_interm_buffer(buffers->client_interm, data->buffers_size, op);
+    produce_end(sems->client_interm);
 }

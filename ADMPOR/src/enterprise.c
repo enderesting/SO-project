@@ -41,50 +41,12 @@ int execute_enterprise(int enterp_id, struct comm_buffers* buffers, struct main_
                 enterprise_process_operation(op, enterp_id, data, data->enterprise_stats, sems);
             }
             free(op);
-
-            // for(int i = 0; i<(data->buffers_size); i++){
-            //     if(ptr[i]==1 && (buff_ptr[i].requested_enterp) == enterp_id){
-            //         printf("hi hi hi\n");
-            //         struct operation *op = calloc(1,sizeof(struct operation));
-            //         enterprise_receive_operation(op, enterp_id, buffers, data);
-            //         enterprise_process_operation(op, enterp_id, data, data->enterprise_stats);
-            //         break;
-            //     }
-            //     free(op);
-            // }
         }
         isEnding = *(data->terminate);
         sleep(1);
     }
     return data->client_stats[enterp_id]; //remember the data?
 
-
-    // int check = 1;
-
-    // while (check == 1) {
-
-    //     int id = *(data->terminate);
-
-    //     if(id == -1) {
-            
-    //         printf("Error");
-    //     }
-
-    //     else if(id == 0) {
-
-    //         enterprise_receive_operation(buffers->main_client->buffer, enterp_id, buffers, data);
-    //     }
-
-    //     else if(id == 1) {
-
-    //         check = 0;
-    //     }
-
-    //     sleep(1);
-    // }
-    
-    
-    // return data->enterprise_stats[enterp_id];
 }
 
 
@@ -95,7 +57,9 @@ int execute_enterprise(int enterp_id, struct comm_buffers* buffers, struct main_
 */
 void enterprise_receive_operation(struct operation* op, int enterp_id, struct comm_buffers* buffers, struct main_data* data, struct semaphores* sems){
     if (*(data->terminate) != 1){
+        consume_begin(sems->interm_enterp);
         read_interm_enterp_buffer(buffers->interm_enterp, enterp_id, data->buffers_size, op);
+        consume_end(sems->interm_enterp);
     }
 }
 
@@ -114,6 +78,8 @@ void enterprise_process_operation(struct operation* op, int enterp_id, struct ma
         op->status = 'A';
     }
     op->receiving_enterp = enterp_id;
+    semaphore_mutex_lock(sems->results_mutex);
     data->results[op->id] = *op;
+    semaphore_mutex_unlock(sems->results_mutex);
     counter[enterp_id]++;
 }

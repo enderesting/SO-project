@@ -4,6 +4,7 @@
 #include "memory.h"
 #include "main.h"
 
+#include "synchronization.h"
 
 
 /* Função principal de um Cliente. Deve executar um ciclo infinito onde em 

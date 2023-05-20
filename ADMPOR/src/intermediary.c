@@ -54,7 +54,9 @@ int execute_intermediary(int interm_id, struct comm_buffers *buffers, struct mai
 void intermediary_receive_operation(struct operation *op, struct comm_buffers *buffers, struct main_data *data, struct semaphores* sems)
 {
     if (*(data->terminate) != 1){
+        consume_begin(sems->client_interm);
         read_client_interm_buffer(buffers->client_interm, data->buffers_size, op);
+        consume_end(sems->client_interm);
     }
 }
 
@@ -68,7 +70,9 @@ void intermediary_receive_operation(struct operation *op, struct comm_buffers *b
 void intermediary_process_operation(struct operation *op, int interm_id, struct main_data *data, int *counter, struct semaphores* sems){
     op->receiving_interm = interm_id;
     op->status = 'I';
+    semaphore_mutex_lock(sems->results_mutex);
     data->results[op->id] = *op;
+    semaphore_mutex_unlock(sems->results_mutex);
     counter[interm_id]++;
 }
 
@@ -77,5 +81,7 @@ void intermediary_process_operation(struct operation *op, int interm_id, struct 
  */
 void intermediary_send_answer(struct operation *op, struct comm_buffers *buffers, struct main_data *data, struct semaphores* sems)
 {
+    produce_begin(sems->interm_enterp);
     write_interm_enterp_buffer(buffers->interm_enterp, data->buffers_size, op);
+    produce_end(sems->interm_enterp);
 }

@@ -4,6 +4,8 @@
 #include "memory.h"
 #include "main.h"
 
+#include "synchronization.h"
+
 /* Função principal de uma Empresa. Deve executar um ciclo infinito onde em 
 * cada iteração lê uma operação e se e data->terminate ainda for igual a 0, processa-a.
 * Operações com id igual a -1 são ignoradas (op inválida) e se data->terminate for igual

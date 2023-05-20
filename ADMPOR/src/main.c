@@ -159,7 +159,9 @@ void create_request(int* op_counter, struct comm_buffers* buffers, struct main_d
         op_ptr->receiving_enterp = -1;
 
         //write in main-client buffer
+        produce_begin(sems->main_client);
         write_main_client_buffer(buffers->main_client,data->buffers_size,op_ptr); // happens right after here
+        produce_end(sems->main_client);
         printf("O pedido #%d foi criado!\n",opCount);
         *op_counter = opCount+1;
         // op_counter_pointer
@@ -179,9 +181,12 @@ void create_request(int* op_counter, struct comm_buffers* buffers, struct main_d
 void read_status(struct main_data* data, struct semaphores* sems){
     int id;
     scanf("%d", &id);
+    
+    semaphore_mutex_lock(sems->results_mutex);
+    struct operation* op = &(data->results[id]);
+    semaphore_mutex_lock(sems->results_mutex);
 
-    // printf("%c\n", data->results[id].status);  
-    if(data->results[id].status == '\0') {
+    if(op->status == '\0') {
 
         //printf("%c\n", data->results[id].status);
         //printf("%d\n", data->results[id].receiving_client);
@@ -227,6 +232,7 @@ void stop_execution(struct main_data* data, struct comm_buffers* buffers, struct
     wait_processes(data);
     write_statistics(data);
     destroy_memory_buffers(data, buffers);
+    destroy_semaphores(sems);
     exit(0);
 }
 
@@ -314,8 +320,9 @@ void create_semaphores(struct main_data* data, struct semaphores* sems){
 }
 
 void wakeup_processes(struct main_data* data, struct semaphores* sems){
-
+    
 }
+
 void destroy_semaphores(struct semaphores* sems){
     //main <-> client
     semaphore_destroy(STR_SEM_MAIN_CLIENT_EMPTY,sems->main_client->empty);
@@ -341,13 +348,17 @@ int main(int argc, char *argv[]) {
     buffers->main_client = create_dynamic_memory(sizeof(struct rnd_access_buffer));
     buffers->client_interm = create_dynamic_memory(sizeof(struct circular_buffer));
     buffers->interm_enterp = create_dynamic_memory(sizeof(struct rnd_access_buffer));
-    //make them sems
+    //semaphore allocation
     struct semaphores* sems = create_dynamic_memory(sizeof(struct semaphores));
-    create_semaphores(data,sems);
+    sems->main_client = create_dynamic_memory(sizeof(struct prodcons));
+    sems->client_interm = create_dynamic_memory(sizeof(struct prodcons));
+    sems->interm_enterp = create_dynamic_memory(sizeof(struct prodcons));
+    sems->results_mutex = create_dynamic_memory(sizeof(sem_t));
     //execute main code
     main_args(argc, argv, data);
     create_dynamic_memory_buffers(data);
     create_shared_memory_buffers(data, buffers);
+    create_semaphores(data,sems);
     launch_processes(buffers, data,sems);
     user_interaction(buffers, data,sems);
     //release memory before terminating

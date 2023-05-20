@@ -1,28 +1,27 @@
+#include <stdio.h>
 #include <semaphore.h>
 #include <fcntl.h> 
-#include <synchronization.h>  
+#include <synchronization.h>
+#include <errno.h>
 
 /* Função que cria um novo semáforo com nome name e valor inicial igual a
 * value. Pode concatenar o resultado da função getuid() a name, para tornar
 * o nome único para o processo.
 */
 sem_t * semaphore_create(char* name, int value){
-    sem_open(name, O_CREAT, 0xFFFFFFFF,value);
-
+    return sem_open(name, O_CREAT, 00600,value);
 }
 
 /* Função que destroi o semáforo passado em argumento.
 */
 void semaphore_destroy(char* name, sem_t* semaphore){
-
     int r1 = sem_close(semaphore);
     int r2 = sem_unlink(name);
-    
     if(r1 == -1){
-        "Closing semaphores failed.\n";
+        perror("sem_close");
     }
-    if(r2== -1){
-        "Unlinking semaphores failed.\n";
+    if(r2 == -1){
+        perror("sem_unlink");
     }
 }
 
