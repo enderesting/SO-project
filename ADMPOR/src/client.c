@@ -57,7 +57,7 @@ void client_get_operation(struct operation* op, int client_id, struct comm_buffe
 
     if (*(data->terminate) != 1){
         consume_begin(sems->main_client);
-        // printf("Reading: Main-Client\n");
+        printf("Reading: Main-Client\n");
         //?????? it doesnt go any further???
         read_main_client_buffer(buffers->main_client, client_id, data->buffers_size, op);
         consume_end(sems->main_client);
@@ -75,12 +75,12 @@ void client_process_operation(struct operation* op, int client_id, struct main_d
     //printf("HEY I'M HERE\n");
     op->receiving_client = client_id;
     op->status = 'C';
-    printf("Processing: Client begin");
+    // printf("Processing: Client begin");
     semaphore_mutex_lock(sems->results_mutex); //stuck here?
-    printf("Processing: Client in process");
+    // printf("Processing: Client in process");
     data->results[op->id] = *op; // <-- i wonder if we should change each stat individually instead
     semaphore_mutex_unlock(sems->results_mutex);
-    printf("Processing: Client DONE!");
+    // printf("Processing: Client DONE!");
     counter[client_id]++;
 }
 

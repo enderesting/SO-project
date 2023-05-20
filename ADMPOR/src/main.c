@@ -288,7 +288,6 @@ void stop_execution(struct main_data *data, struct comm_buffers *buffers, struct
  */
 void wait_processes(struct main_data *data)
 {
-
     for(int i = 0; i < (data->n_clients); i++){
         wait_process((data->client_pids[i])); //needs all of them to be done
     }
@@ -388,7 +387,13 @@ void create_semaphores(struct main_data *data, struct semaphores *sems)
 
 void wakeup_processes(struct main_data *data, struct semaphores *sems)
 {
+    produce_end(sems->main_client);
+    produce_end(sems->client_interm);
+    produce_end(sems->interm_enterp);
+    semaphore_mutex_unlock(sems->results_mutex);
+
 }
+
 void destroy_semaphores(struct semaphores *sems)
 {
     // main <-> client
@@ -410,9 +415,11 @@ void destroy_semaphores(struct semaphores *sems)
 int main(int argc, char *argv[])
 {
     struct sigaction sa;
-    sa.sa_handler = handler;
+    sa.sa_handler = handler;    //func called when signal received
+    sa.sa_flags = 0;            //controls behavior of sig handler e.g. restart when interrupted?
+    sigemptyset(&sa.sa_mask);   //sig that are blocked so handler cant be interrupted by other sigs
 
-    if (sigaction(SIGINT, &sa, NULL) == -1)
+    if (sigaction(SIGINT, &sa, NULL) == -1) //execute here if error. otherwise, handler
     {
         perror("sigaction");
         return 1;

@@ -55,7 +55,7 @@ void intermediary_receive_operation(struct operation *op, struct comm_buffers *b
 {
     if (*(data->terminate) != 1){
         consume_begin(sems->client_interm);
-        // printf("Reading: Client-Interm\n");
+        printf("Reading: Client-Interm\n");
         read_client_interm_buffer(buffers->client_interm, data->buffers_size, op);
         consume_end(sems->client_interm);
         // printf("Reading: Client-Interm DONE!\n");
@@ -72,12 +72,12 @@ void intermediary_receive_operation(struct operation *op, struct comm_buffers *b
 void intermediary_process_operation(struct operation *op, int interm_id, struct main_data *data, int *counter, struct semaphores* sems){
     op->receiving_interm = interm_id;
     op->status = 'I';
-    printf("Processing: Interm begin");
+    // printf("Processing: Interm begin");
     semaphore_mutex_lock(sems->results_mutex);
-    printf("Processing: Interm in process");
+    // printf("Processing: Interm in process");
     data->results[op->id] = *op;
     semaphore_mutex_unlock(sems->results_mutex);
-    printf("Processing: Interm DONE!");
+    // printf("Processing: Interm DONE!");
     counter[interm_id]++;
 }
 

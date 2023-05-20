@@ -5,10 +5,12 @@ extern struct main_data *data;
 extern struct comm_buffers *buffers;
 extern struct semaphores *sems;
 
-void handler()
+void handler(int signum)
 {
-    wakeup_processes(data, sems);
-    stop_execution(data, buffers, sems);
+    if (signum == SIGINT){
+        printf("hiahaihaihi");
+        stop_execution(data, buffers, sems);
+    }
 }
 
 void write_alarm()

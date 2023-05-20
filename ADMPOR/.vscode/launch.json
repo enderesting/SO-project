@@ -7,12 +7,15 @@
             "request": "launch",
             "program": "${workspaceFolder}/bin/AdmPor",
             "args": [
-                "10",
-                "3",
-                "1",
-                "1",
-                "1"
+                "./bin/silly.txt"
             ],
+            // "args": [
+            //     "10",
+            //     "3",
+            //     "1",
+            //     "1",
+            //     "1"
+            // ],
             "stopAtEntry": true,
             "cwd": "${workspaceFolder}",
             "environment": [],
