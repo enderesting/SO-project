@@ -26,6 +26,7 @@
 int execute_client(int client_id, struct comm_buffers* buffers, struct main_data* data,  struct semaphores* sems){
     int isEnding = *(data->terminate);
     while (isEnding != 1) {
+        // sleep(10);
         if(isEnding == -1) {
             printf("Error");
         }
@@ -43,7 +44,6 @@ int execute_client(int client_id, struct comm_buffers* buffers, struct main_data
             free(op);
         }
         isEnding = *(data->terminate);
-        sleep(1);
     }
     return data->client_stats[client_id]; //remember the data?
 }
@@ -57,8 +57,11 @@ void client_get_operation(struct operation* op, int client_id, struct comm_buffe
 
     if (*(data->terminate) != 1){
         consume_begin(sems->main_client);
+        // printf("Reading: Main-Client\n");
+        //?????? it doesnt go any further???
         read_main_client_buffer(buffers->main_client, client_id, data->buffers_size, op);
         consume_end(sems->main_client);
+        // printf("Reading: Main-Client DONE!\n");
     }
 }
 
@@ -72,9 +75,12 @@ void client_process_operation(struct operation* op, int client_id, struct main_d
     //printf("HEY I'M HERE\n");
     op->receiving_client = client_id;
     op->status = 'C';
-    semaphore_mutex_lock(sems->results_mutex);
+    printf("Processing: Client begin");
+    semaphore_mutex_lock(sems->results_mutex); //stuck here?
+    printf("Processing: Client in process");
     data->results[op->id] = *op; // <-- i wonder if we should change each stat individually instead
     semaphore_mutex_unlock(sems->results_mutex);
+    printf("Processing: Client DONE!");
     counter[client_id]++;
 }
 
@@ -83,6 +89,8 @@ void client_process_operation(struct operation* op, int client_id, struct main_d
 */
 void client_send_operation(struct operation* op, struct comm_buffers* buffers, struct main_data* data, struct semaphores* sems){
     produce_begin(sems->client_interm);
+    // printf("Writing: Client-Interm\n");
     write_client_interm_buffer(buffers->client_interm, data->buffers_size, op);
     produce_end(sems->client_interm);
+    // printf("Writing: Client-Interm DONE!\n");
 }

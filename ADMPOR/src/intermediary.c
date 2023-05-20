@@ -26,6 +26,7 @@ int execute_intermediary(int interm_id, struct comm_buffers *buffers, struct mai
 {
     int isEnding = *(data->terminate);
     while (isEnding != 1) {
+        // sleep(10);
         if(isEnding == -1) {
             printf("Error");
         }
@@ -42,7 +43,6 @@ int execute_intermediary(int interm_id, struct comm_buffers *buffers, struct mai
                     free(op);
         }
         isEnding = *(data->terminate);
-        sleep(1);
     }
     return data->client_stats[interm_id];
 }
@@ -55,8 +55,10 @@ void intermediary_receive_operation(struct operation *op, struct comm_buffers *b
 {
     if (*(data->terminate) != 1){
         consume_begin(sems->client_interm);
+        // printf("Reading: Client-Interm\n");
         read_client_interm_buffer(buffers->client_interm, data->buffers_size, op);
         consume_end(sems->client_interm);
+        // printf("Reading: Client-Interm DONE!\n");
     }
 }
 
@@ -70,9 +72,12 @@ void intermediary_receive_operation(struct operation *op, struct comm_buffers *b
 void intermediary_process_operation(struct operation *op, int interm_id, struct main_data *data, int *counter, struct semaphores* sems){
     op->receiving_interm = interm_id;
     op->status = 'I';
+    printf("Processing: Interm begin");
     semaphore_mutex_lock(sems->results_mutex);
+    printf("Processing: Interm in process");
     data->results[op->id] = *op;
     semaphore_mutex_unlock(sems->results_mutex);
+    printf("Processing: Interm DONE!");
     counter[interm_id]++;
 }
 
@@ -82,6 +87,8 @@ void intermediary_process_operation(struct operation *op, int interm_id, struct 
 void intermediary_send_answer(struct operation *op, struct comm_buffers *buffers, struct main_data *data, struct semaphores* sems)
 {
     produce_begin(sems->interm_enterp);
+    // printf("Writing: Interm-Enterp\n");
     write_interm_enterp_buffer(buffers->interm_enterp, data->buffers_size, op);
     produce_end(sems->interm_enterp);
+    // printf("Writing: Interm-Enterp DONE!\n");
 }

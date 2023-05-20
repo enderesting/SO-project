@@ -26,6 +26,7 @@
 int execute_enterprise(int enterp_id, struct comm_buffers* buffers, struct main_data* data, struct semaphores* sems){
     int isEnding = *(data->terminate);
     while (isEnding != 1) {
+        // sleep(10);
         if(isEnding == -1) {
             printf("Error");
         }
@@ -43,7 +44,6 @@ int execute_enterprise(int enterp_id, struct comm_buffers* buffers, struct main_
             free(op);
         }
         isEnding = *(data->terminate);
-        sleep(1);
     }
     return data->client_stats[enterp_id]; //remember the data?
 
@@ -58,8 +58,10 @@ int execute_enterprise(int enterp_id, struct comm_buffers* buffers, struct main_
 void enterprise_receive_operation(struct operation* op, int enterp_id, struct comm_buffers* buffers, struct main_data* data, struct semaphores* sems){
     if (*(data->terminate) != 1){
         consume_begin(sems->interm_enterp);
+        // printf("Reading: Interm-Enterp\n");
         read_interm_enterp_buffer(buffers->interm_enterp, enterp_id, data->buffers_size, op);
         consume_end(sems->interm_enterp);
+        // printf("Reading: Interm-Enterp DONE!\n");
     }
 }
 
@@ -78,8 +80,11 @@ void enterprise_process_operation(struct operation* op, int enterp_id, struct ma
         op->status = 'A';
     }
     op->receiving_enterp = enterp_id;
+    printf("Processing: Enterprise begin");
     semaphore_mutex_lock(sems->results_mutex);
+    printf("Processing: Enterprise in process");
     data->results[op->id] = *op;
     semaphore_mutex_unlock(sems->results_mutex);
+    printf("Processing: Enterprise DONE!");
     counter[enterp_id]++;
 }
