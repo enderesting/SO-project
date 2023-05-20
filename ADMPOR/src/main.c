@@ -40,8 +40,8 @@ void main_args(int argc, char *argv[], struct main_data *data)
         printf("%d\n", data->n_clients);
         printf("%d\n", data->n_intermediaries);
         printf("%d\n", data->n_enterprises);
-        printf("%d\n", data->log_filename);
-        printf("%d\n", data->statistics_filename);
+        //printf("%c\n", data->log_filename);
+        //printf("%c\n", data->statistics_filename);
         printf("%d\n", data->alarm_time);
     }
     else

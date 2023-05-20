@@ -21,8 +21,7 @@ void read_arguments(char *file_name, struct main_data *data)
     data->n_enterprises = atoi(fgets(contents, 100, file));
     data->log_filename = fopen(fgets(contents, 100, file), "w+");
     data->statistics_filename = fopen(fgets(contents, 100, file), "w+");
-    int alarm = atoi(fgets(contents, 100, file));
-    data->alarm_time = &alarm;
+    data->alarm_time = atoi(fgets(contents, 100, file));
 
     fclose(file);
 
