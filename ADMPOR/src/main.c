@@ -121,6 +121,7 @@ void user_interaction(struct comm_buffers* buffers, struct main_data* data, stru
         }else if(strcmp(cmd,"status")==0){
             read_status(data,sems);
         }else if(strcmp(cmd,"stop")==0){
+            printf("getting out of it"); 
             stop_execution(data,buffers,sems);
             check = 0;
         }else if(strcmp(cmd,"help") == 0){
@@ -160,8 +161,10 @@ void create_request(int* op_counter, struct comm_buffers* buffers, struct main_d
 
         //write in main-client buffer
         produce_begin(sems->main_client);
+        printf("Writing: Main-Client\n");
         write_main_client_buffer(buffers->main_client,data->buffers_size,op_ptr); // happens right after here
         produce_end(sems->main_client);
+        printf("Writing: Main-Client DONE!\n");
         printf("O pedido #%d foi criado!\n",opCount);
         *op_counter = opCount+1;
         // op_counter_pointer
@@ -184,7 +187,7 @@ void read_status(struct main_data* data, struct semaphores* sems){
     
     semaphore_mutex_lock(sems->results_mutex);
     struct operation* op = &(data->results[id]);
-    semaphore_mutex_lock(sems->results_mutex);
+    semaphore_mutex_unlock(sems->results_mutex);
 
     if(op->status == '\0') {
 
@@ -228,7 +231,7 @@ void stop_execution(struct main_data* data, struct comm_buffers* buffers, struct
     // printf("terminate: %d \n", *data->terminate);
     *data->terminate = 1;
     // printf("terminate: %d \n", *data->terminate);
-    // printf("getting out of it"); // this is only triggered AFTER the various process printed out their thing...
+    wakeup_processes(data,sems);
     wait_processes(data);
     write_statistics(data);
     destroy_memory_buffers(data, buffers);
@@ -242,8 +245,7 @@ void stop_execution(struct main_data* data, struct comm_buffers* buffers, struct
 void wait_processes(struct main_data* data){
 
     for(int i = 0; i < (data->n_clients); i++){
-
-        wait_process((data->client_pids[i]));
+        wait_process((data->client_pids[i])); //needs all of them to be done
     }
 }
 
@@ -303,10 +305,22 @@ void destroy_memory_buffers(struct main_data* data, struct comm_buffers* buffers
 
 void create_semaphores(struct main_data* data, struct semaphores* sems){
     int buffer = data->buffers_size;
+    
     //main <-> client
-    sems->main_client->empty = semaphore_create(STR_SEM_MAIN_CLIENT_EMPTY,buffer);
+    sems->main_client->empty = semaphore_create(STR_SEM_MAIN_CLIENT_EMPTY,buffer); //like.???
+    int v1;
+    sem_getvalue(sems->main_client->empty, &v1);
+
     sems->main_client->full = semaphore_create(STR_SEM_MAIN_CLIENT_FULL,0);
+    int v2;
+    sem_getvalue(sems->main_client->full, &v2);
+
     sems->main_client->mutex = semaphore_create(STR_SEM_MAIN_CLIENT_MUTEX,1);
+    int v3;
+    sem_getvalue(sems->main_client->mutex, &v3);
+    // printf("value3: %d",sem_getvalue(sems->main_client->mutex, &v3));
+
+
     //client <-> interm
     sems->client_interm->empty = semaphore_create(STR_SEM_CLIENT_INTERM_EMPTY,buffer);
     sems->client_interm->full = semaphore_create(STR_SEM_CLIENT_INTERM_FULL,0);
@@ -317,6 +331,8 @@ void create_semaphores(struct main_data* data, struct semaphores* sems){
     sems->interm_enterp->mutex = semaphore_create(STR_SEM_INTERM_ENTERP_MUTEX,1); 
     //results_mutex
     sems->results_mutex = semaphore_create(STR_SEM_RESULTS_MUTEX,1); 
+    int v4;
+    sem_getvalue(sems->results_mutex, &v4);
 }
 
 void wakeup_processes(struct main_data* data, struct semaphores* sems){

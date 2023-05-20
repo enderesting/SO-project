@@ -151,6 +151,7 @@ void read_main_client_buffer(struct rnd_access_buffer *buffer, int client_id, in
 {
     // read_rnd_access_buffer(buffer, client_id, buffer_size, op);
         // read_rnd_access_buffer(buffer, enterp_id, buffer_size, op);
+    // printf("HIII!!!!! FUCK YOU!!!!!!!!");
     int found = 0;
     int *p = buffer->ptrs;
     struct operation *ops = buffer->buffer;
