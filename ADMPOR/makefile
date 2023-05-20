@@ -24,7 +24,7 @@ CFLAGS = -g -Wall -Wextra -I $(INC_DIR)
 #		-Wextra: all the extra warning files.
 # 		-I $(INC_DIR): includes the directory to find the .h files
 
-OBJ = client.o enterprise.o intermediary.o process.o main.o memory.o synchronization.o apsignal.o configuration.o aptime.o
+OBJ = client.o enterprise.o intermediary.o process.o main.o memory.o synchronization.o apsignal.o configuration.o aptime.o log.o
 #DEP = main.h memory.h
 
 # #linking all objects# #
