@@ -14,14 +14,14 @@ void read_arguments(char *file_name, struct main_data *data)
         exit(0);
     }
 
-    data->max_ops = *fgets(contents, 50, file);
-    data->buffers_size = *fgets(contents, 50, file);
-    data->n_clients = *fgets(contents, 50, file);
-    data->n_intermediaries = *fgets(contents, 50, file);
-    data->n_enterprises = *fgets(contents, 50, file);
-    data->log_filename = fopen(fgets(contents, 50, file), "w+");
-    data->statistics_filename = fopen(fgets(contents, 50, file), "w+");
-    int alarm = *fgets(contents, 50, file);
+    data->max_ops = atoi(fgets(contents, 100, file));
+    data->buffers_size = atoi(fgets(contents, 100, file));
+    data->n_clients = atoi(fgets(contents, 100, file));
+    data->n_intermediaries = atoi(fgets(contents, 100, file));
+    data->n_enterprises = atoi(fgets(contents, 100, file));
+    data->log_filename = fopen(fgets(contents, 100, file), "w+");
+    data->statistics_filename = fopen(fgets(contents, 100, file), "w+");
+    int alarm = atoi(fgets(contents, 100, file));
     data->alarm_time = &alarm;
 
     fclose(file);
