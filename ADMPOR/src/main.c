@@ -64,9 +64,13 @@ void create_dynamic_memory_buffers(struct main_data *data)
     data->intermediary_pids = create_dynamic_memory((data->n_intermediaries) * intSize);
     data->enterprise_pids = create_dynamic_memory((data->n_enterprises) * intSize);
     // process ids are different, this just initiates the pointer -- they need to be filled
-    data->client_stats = create_dynamic_memory((data->n_clients) * intSize);
-    data->intermediary_stats = create_dynamic_memory((data->n_intermediaries) * intSize);
-    data->enterprise_stats = create_dynamic_memory((data->n_enterprises) * intSize);
+    data->client_stats = create_dynamic_memory(MAX_RESULTS*intSize);
+    data->intermediary_stats = create_dynamic_memory(MAX_RESULTS*intSize);
+    data->enterprise_stats = create_dynamic_memory(MAX_RESULTS*intSize);
+
+    // data->log_filename = create_dynamic_memory(sizeof(FILE)); //we dont need to do these?
+    // data->statistics_filename = create_dynamic_memory(sizeof(FILE));
+    data->alarm_time = create_dynamic_memory(sizeof(int));
 }
 
 /*
@@ -339,14 +343,14 @@ void destroy_memory_buffers(struct main_data *data, struct comm_buffers *buffers
     size_t opSize = sizeof(struct operation);
 
     // destroying shared memory
-    destroy_shared_memory(STR_SHM_INTERM_ENTERP_BUFFER, buffers->interm_enterp, buffSize * opSize);
-    destroy_shared_memory(STR_SHM_CLIENT_INTERM_BUFFER, buffers->client_interm, buffSize * opSize);
-    destroy_shared_memory(STR_SHM_MAIN_CLIENT_BUFFER, buffers->main_client, buffSize * opSize);
+    destroy_shared_memory(&STR_SHM_INTERM_ENTERP_BUFFER, buffers->interm_enterp->buffer, buffSize * opSize); // bug here
+    destroy_shared_memory(&STR_SHM_CLIENT_INTERM_BUFFER, buffers->client_interm->buffer, buffSize * opSize);
+    destroy_shared_memory(&STR_SHM_MAIN_CLIENT_BUFFER, buffers->main_client->buffer, buffSize * opSize);
 
     int intSize = sizeof(int);
-    destroy_shared_memory(STR_SHM_MAIN_CLIENT_PTR, buffers->main_client, buffSize * intSize);
-    destroy_shared_memory(STR_SHM_CLIENT_INTERM_PTR, buffers->client_interm, buffSize * sizeof(struct pointers));
-    destroy_shared_memory(STR_SHM_INTERM_ENTERP_PTR, buffers->interm_enterp, buffSize * intSize);
+    destroy_shared_memory(STR_SHM_MAIN_CLIENT_PTR, buffers->main_client->ptrs, buffSize * intSize);
+    destroy_shared_memory(STR_SHM_CLIENT_INTERM_PTR, buffers->client_interm->ptrs, buffSize * sizeof(struct pointers));
+    destroy_shared_memory(STR_SHM_INTERM_ENTERP_PTR, buffers->interm_enterp->ptrs, buffSize * intSize);
 
     destroy_shared_memory(STR_SHM_RESULTS, data->results, (data->max_ops) * opSize);
     destroy_shared_memory(STR_SHM_TERMINATE, data->terminate, intSize);
@@ -435,6 +439,7 @@ int main(int argc, char *argv[])
     }
     // init data structures
     struct main_data *data = create_dynamic_memory(sizeof(struct main_data));
+    // init buffer structures
     struct comm_buffers *buffers = create_dynamic_memory(sizeof(struct comm_buffers));
     buffers->main_client = create_dynamic_memory(sizeof(struct rnd_access_buffer));
     buffers->client_interm = create_dynamic_memory(sizeof(struct circular_buffer));
@@ -451,14 +456,4 @@ int main(int argc, char *argv[])
     create_semaphores(data, sems);
     launch_processes(buffers, data, sems);
     user_interaction(buffers, data, sems);
-    // release memory before terminating
-    destroy_dynamic_memory(data);
-    destroy_dynamic_memory(buffers->main_client);
-    destroy_dynamic_memory(buffers->client_interm);
-    destroy_dynamic_memory(buffers->interm_enterp);
-    destroy_dynamic_memory(buffers);
-    destroy_dynamic_memory(sems->main_client);
-    destroy_dynamic_memory(sems->client_interm);
-    destroy_dynamic_memory(sems->interm_enterp);
-    destroy_dynamic_memory(sems);
 }
