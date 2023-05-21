@@ -1,3 +1,10 @@
+/*
+ * Grupo: SO-001
+ * José "Emily" Sá   fc58200
+ * Yichen Cao "Mimi" fc58165
+ * Gonçalo Fernandes fc58194
+ */
+
 #include <unistd.h>
 #include "apsignal.h"
 #include "main.h"
@@ -19,7 +26,7 @@ void write_alarm()
         for (int i = 0; i < data->max_ops; i++)
         {
             struct operation next = data->results[i];
-            printf("op: %d status: %c start_time: %d client: %d client_time: %d intermediary: %d intermediary_time: %d enterprise: %d enterprise_time: %d",
+            printf("op: %d status: %c start_time: %ld client: %d client_time: %ld intermediary: %d intermediary_time: %ld enterprise: %d enterprise_time: %ld",
                    next.id, next.status, next.start_time.tv_sec, next.receiving_client, next.client_time.tv_sec,
                    next.receiving_interm, next.intermed_time.tv_sec, next.receiving_enterp, next.enterp_time.tv_sec);
         }
