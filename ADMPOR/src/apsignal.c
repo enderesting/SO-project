@@ -20,8 +20,8 @@ void write_alarm()
         {
             struct operation next = data->results[i];
             printf("op: %d status: %c start_time: %d client: %d client_time: %d intermediary: %d intermediary_time: %d enterprise: %d enterprise_time: %d",
-                   next.id, next.status, next.start_time, next.receiving_client, next.client_time,
-                   next.receiving_interm, next.intermed_time, next.receiving_enterp, next.enterp_time);
+                   next.id, next.status, next.start_time.tv_sec, next.receiving_client, next.client_time.tv_sec,
+                   next.receiving_interm, next.intermed_time.tv_sec, next.receiving_enterp, next.enterp_time.tv_sec);
         }
     }
 }

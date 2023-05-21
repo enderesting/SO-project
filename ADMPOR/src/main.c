@@ -36,14 +36,11 @@ void main_args(int argc, char *argv[], struct main_data *data)
     if (argc == 2)
     {
         read_arguments(argv[1], data);
-        printf("%d\n", data->max_ops);
-        printf("%d\n", data->buffers_size);
-        printf("%d\n", data->n_clients);
-        printf("%d\n", data->n_intermediaries);
-        printf("%d\n", data->n_enterprises);
-        //printf("%c\n", data->log_filename);
-        //printf("%c\n", data->statistics_filename);
-        //printf("%d\n", *data->alarm_time);
+        //printf("%d\n", data->max_ops);
+        //printf("%d\n", data->buffers_size);
+        //printf("%d\n", data->n_clients);
+        //printf("%d\n", data->n_intermediaries);
+        //printf("%d\n", data->n_enterprises);
     }
     else
     {

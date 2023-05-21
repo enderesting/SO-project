@@ -1,53 +1,31 @@
 Process statistics:
-     Cliente 0 preparou 2 pedidos!
-     Cliente 1 preparou 2 pedidos!
-     Intermediário 0 preparou 2 pedidos!
-     Intermediário 1 preparou 2 pedidos!
-     Empresa 0 preparou 2 pedidos!
-     Empresa 1 preparou 2 pedidos!
+     Cliente 0 preparou 1 pedidos!
+     Cliente 1 preparou 1 pedidos!
+     Intermediário 0 preparou 1 pedidos!
+     Intermediário 1 preparou 1 pedidos!
+     Empresa 0 preparou 1 pedidos!
+     Empresa 1 preparou 1 pedidos!
 
 Request statistics:
 Request: 0
 Status: E
 Client id: 0
-Intermediary id: 1
+Intermediary id: 0
 Enterprise id: 0
-Start time: 2023-5-21 19:3:56.761
-Client time: 2023-5-21 19:3:56.761
-Intermediary time: 2023-5-21 19:3:56.761
-Enterprise time: 2023-5-21 19:3:56.761
+Start time: 2023-5-21 19:13:22.769
+Client time: 2023-5-21 19:13:22.769
+Intermediary time: 2023-5-21 19:13:22.769
+Enterprise time: 2023-5-21 19:13:22.769
 Total time: 0
 
 Request: 1
 Status: E
 Client id: 1
-Intermediary id: 0
-Enterprise id: 1
-Start time: 2023-5-21 19:3:59.754
-Client time: 2023-5-21 19:3:59.754
-Intermediary time: 2023-5-21 19:3:59.754
-Enterprise time: 2023-5-21 19:3:59.754
-Total time: 0
-
-Request: 2
-Status: E
-Client id: 1
 Intermediary id: 1
-Enterprise id: 0
-Start time: 2023-5-21 19:4:4.537
-Client time: 2023-5-21 19:4:4.537
-Intermediary time: 2023-5-21 19:4:4.537
-Enterprise time: 2023-5-21 19:4:4.537
-Total time: 0
-
-Request: 3
-Status: E
-Client id: 0
-Intermediary id: 0
 Enterprise id: 1
-Start time: 2023-5-21 19:4:9.900
-Client time: 2023-5-21 19:4:9.900
-Intermediary time: 2023-5-21 19:4:9.900
-Enterprise time: 2023-5-21 19:4:9.900
+Start time: 2023-5-21 19:13:25.456
+Client time: 2023-5-21 19:13:25.456
+Intermediary time: 2023-5-21 19:13:25.456
+Enterprise time: 2023-5-21 19:13:25.456
 Total time: 0
 
