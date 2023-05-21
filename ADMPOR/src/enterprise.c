@@ -12,6 +12,7 @@
 #include "synchronization.h"
 #include <unistd.h>
 #include <stdlib.h>
+#include "aptime.h"
 
 
 /* 
@@ -45,7 +46,7 @@ int execute_enterprise(int enterp_id, struct comm_buffers* buffers, struct main_
         }
         isEnding = *(data->terminate);
     }
-    return data->client_stats[enterp_id]; //remember the data?
+    return data->enterprise_stats[enterp_id]; //remember the data?
 
 }
 
@@ -79,6 +80,8 @@ void enterprise_process_operation(struct operation* op, int enterp_id, struct ma
     }else {
         op->status = 'A';
     }
+    op->enterp_time = get_time(); 
+    counter[enterp_id]++;
     op->receiving_enterp = enterp_id;
     // printf("Processing: Enterprise begin");
     semaphore_mutex_lock(sems->results_mutex);
@@ -86,5 +89,4 @@ void enterprise_process_operation(struct operation* op, int enterp_id, struct ma
     data->results[op->id] = *op;
     semaphore_mutex_unlock(sems->results_mutex);
     // printf("Processing: Enterprise DONE!");
-    counter[enterp_id]++;
 }

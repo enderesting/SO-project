@@ -12,6 +12,7 @@
 #include "synchronization.h"
 #include <unistd.h>
 #include <stdlib.h>
+#include "aptime.h"
 
 
 /* 
@@ -45,6 +46,7 @@ int execute_client(int client_id, struct comm_buffers* buffers, struct main_data
         }
         isEnding = *(data->terminate);
     }
+    //printf("client_stats in client return: %d\n", data->client_stats[client_id]);
     return data->client_stats[client_id]; //remember the data?
 }
 
@@ -75,13 +77,15 @@ void client_process_operation(struct operation* op, int client_id, struct main_d
     //printf("HEY I'M HERE\n");
     op->receiving_client = client_id;
     op->status = 'C';
+    op->client_time = get_time(); 
+    counter[client_id]++;
+    //printf("client_stats in client after ++: %d\n", data->client_stats[client_id]);
     // printf("Processing: Client begin");
     semaphore_mutex_lock(sems->results_mutex); //stuck here?
     printf("Processing: Client in process\n");
     data->results[op->id] = *op; // <-- i wonder if we should change each stat individually instead
     semaphore_mutex_unlock(sems->results_mutex);
     // printf("Processing: Client DONE!");
-    counter[client_id]++;
 }
 
 /*

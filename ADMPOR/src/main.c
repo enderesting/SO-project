@@ -17,6 +17,7 @@
 #include "synchronization.h"
 #include "aptime.h"
 #include "log.h"
+#include "stats.h"
 
 struct main_data ata = {0};
 struct comm_buffers uffers = {0};
@@ -159,7 +160,6 @@ void user_interaction(struct comm_buffers *buffers, struct main_data *data, stru
         {
             log_stop(data);
             fclose(data->log_filename);
-            fclose(data->statistics_filename);
             stop_execution(data, buffers, sems);
             check = 0;
         }
@@ -196,9 +196,9 @@ void create_request(int *op_counter, struct comm_buffers *buffers, struct main_d
     if (opCount < (data->max_ops))
     {
         // create op
-        struct timespec c;
-        struct timespec i;
-        struct timespec e;
+        struct tm c;
+        struct tm i;
+        struct tm e;
         struct operation *op_ptr = calloc(1, sizeof(struct operation));
         op_ptr->id = opCount;
         op_ptr->requesting_client = client;
@@ -294,7 +294,8 @@ void stop_execution(struct main_data *data, struct comm_buffers *buffers, struct
     // printf("terminate: %d \n", *data->terminate);
     wakeup_processes(data,sems);
     wait_processes(data);
-    write_statistics(data);
+    write_stats(data, data->results);
+    fclose(data->statistics_filename);
     destroy_memory_buffers(data, buffers);
     exit(0);
 }
@@ -305,7 +306,13 @@ void stop_execution(struct main_data *data, struct comm_buffers *buffers, struct
 void wait_processes(struct main_data *data)
 {
     for(int i = 0; i < (data->n_clients); i++){
-        wait_process((data->client_pids[i])); //needs all of them to be done
+        data->client_stats[i] = wait_process(data->client_pids[i]); //needs all of them to be done
+    }
+    for(int i = 0; i < (data->n_intermediaries); i++){
+        data->intermediary_stats[i] = wait_process(data->intermediary_pids[i]); //needs all of them to be done
+    }
+    for(int i = 0; i < (data->n_enterprises); i++){
+        data->enterprise_stats[i] = wait_process(data->enterprise_pids[i]); //needs all of them to be done    
     }
 }
 
@@ -315,24 +322,24 @@ void wait_processes(struct main_data *data)
 void write_statistics(struct main_data *data)
 {
 
-    printf("Terminando o AdmPor! Imprimindo estatísticas:\n");
+    //printf("Terminando o AdmPor! Imprimindo estatísticas:\n");
 
     for (int i = 0; i < data->n_clients; i++)
     {
-
-        printf("Cliente %d preparou %d pedidos!\n", i, data->client_stats[i]);
+        //printf("client_stats in main after op: %d\n", data->client_stats[0]);
+        fprintf(data->statistics_filename,"     Cliente %d preparou %d pedidos!\n", i, data->client_stats[i]);
     }
 
     for (int i = 0; i < data->n_intermediaries; i++)
     {
 
-        printf("Intermediário %d preparou %d pedidos!\n", i, data->intermediary_stats[i]);
+        fprintf(data->statistics_filename,"     Intermediário %d preparou %d pedidos!\n", i, data->intermediary_stats[i]);
     }
 
     for (int i = 0; i < data->n_enterprises; i++)
     {
 
-        printf("Empresa %d preparou %d pedidos!\n", i, data->enterprise_stats[i]);
+        fprintf(data->statistics_filename,"     Empresa %d preparou %d pedidos!\n", i, data->enterprise_stats[i]);
     }
 }
 

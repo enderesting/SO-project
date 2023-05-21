@@ -109,7 +109,7 @@ char *tmToString(struct tm time) {
     char mth_temp[50] = {};
     mth_str = mth_temp;
 
-    int month = time.tm_mon;
+    int month = time.tm_mon + 1;
 
     char* day_str;
     char day_temp[50] = {};

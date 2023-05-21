@@ -11,6 +11,7 @@
 #include "synchronization.h"
 #include <unistd.h>
 #include <stdlib.h>
+#include "aptime.h"
 
 
 /*
@@ -44,7 +45,7 @@ int execute_intermediary(int interm_id, struct comm_buffers *buffers, struct mai
         }
         isEnding = *(data->terminate);
     }
-    return data->client_stats[interm_id];
+    return data->intermediary_stats[interm_id];
 }
 
 /*
@@ -72,13 +73,14 @@ void intermediary_receive_operation(struct operation *op, struct comm_buffers *b
 void intermediary_process_operation(struct operation *op, int interm_id, struct main_data *data, int *counter, struct semaphores* sems){
     op->receiving_interm = interm_id;
     op->status = 'I';
+    op->intermed_time = get_time(); 
+    counter[interm_id]++;
     // printf("Processing: Interm begin");
     semaphore_mutex_lock(sems->results_mutex);
     printf("Processing: Interm in process\n");
     data->results[op->id] = *op;
     semaphore_mutex_unlock(sems->results_mutex);
     // printf("Processing: Interm DONE!");
-    counter[interm_id]++;
 }
 
 /*

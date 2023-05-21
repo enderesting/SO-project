@@ -44,10 +44,10 @@ struct operation {
 	int receiving_interm;		//id do intermediário que fez entrega
 	int receiving_enterp;		//id do empresa que recebeu a encomenda
 
-	struct timespec start_time; //quando o pedido foi criado
-	struct timespec client_time; //quando o cliente recebeu //o pedido
-	struct timespec intermed_time; //quando o intermediário recebeu //o pedido
-	struct timespec enterp_time; //quando a empresa recebeu //o pedido
+	struct tm start_time; //quando o pedido foi criado
+	struct tm client_time; //quando o cliente recebeu //o pedido
+	struct tm intermed_time; //quando o intermediário recebeu //o pedido
+	struct tm enterp_time; //quando a empresa recebeu //o pedido
 };
 
 
