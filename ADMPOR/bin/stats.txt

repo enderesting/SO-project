@@ -1,0 +1,15 @@
+Process statistics:
+     Cliente 0 preparou 1 pedidos!
+     Intermediário 0 preparou 1 pedidos!
+     Empresa 0 preparou 1 pedidos!
+
+Request statistics:
+Request: 0
+Status: E
+Client id: 0
+Intermediary id: 0
+Enterprise id: 0
+Start time: 2023-5-21 16:0:54 
+Client time: 2023-5-21 16:0:54 
+Intermediary time: 2023-5-21 16:0:54 
+Enterprise time: 2023-5-21 16:0:54 

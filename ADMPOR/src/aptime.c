@@ -5,15 +5,13 @@
 #include <time.h>
 
 
-struct timespec get_time() {
+struct tm get_time() {
 
-    struct timespec actual_time;
-    
-    if(clock_gettime(CLOCK_REALTIME, &actual_time) == 1) {
+    struct tm* time_1;
+    time_t actual_time;
 
-        printf("ERRO");
-        exit(1);
-    }
+    actual_time = time((time_t*)NULL);
+    time_1 = localtime(&actual_time);
 
-    return actual_time;
+    return *time_1;
 }
