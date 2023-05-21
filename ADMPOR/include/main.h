@@ -39,7 +39,7 @@ struct main_data {
 
 	FILE* log_filename;         //nome do ficheiro de log
 	FILE* statistics_filename;  //nome do ficheiro de estatísticas
-	int* alarm_time;            //temporização para o alarme
+	int alarm_time;            //temporização para o alarme
 	
 	struct operation* results;	//array com histórico de ops executadas
 	

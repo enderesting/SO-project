@@ -22,13 +22,14 @@ void write_alarm()
 {
     while (1)
     {
-        sleep(*data->alarm_time);
+        sleep(data->alarm_time);
         for (int i = 0; i < data->max_ops; i++)
         {
-            struct operation next = data->results[i];
-            printf("op: %d status: %c start_time: %ld client: %d client_time: %ld intermediary: %d intermediary_time: %ld enterprise: %d enterprise_time: %ld",
-                   next.id, next.status, next.start_time.tv_sec, next.receiving_client, next.client_time.tv_sec,
-                   next.receiving_interm, next.intermed_time.tv_sec, next.receiving_enterp, next.enterp_time.tv_sec);
+            printf("content\n");
+            // struct operation next = data->results[i]; 
+            // printf("op: %d status: %c start_time: %ld client: %d client_time: %ld intermediary: %d intermediary_time: %ld enterprise: %d enterprise_time: %ld",
+            //        next.id, next.status, next.start_time.tv_sec, next.receiving_client, next.client_time.tv_sec,
+            //        next.receiving_interm, next.intermed_time.tv_sec, next.receiving_enterp, next.enterp_time.tv_sec);
         }
     }
 }

@@ -4,7 +4,6 @@
  * Yichen Cao "Mimi" fc58165
  * Gonçalo Fernandes fc58194
  */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/mman.h>
@@ -148,7 +147,7 @@ void write_interm_enterp_buffer(struct rnd_access_buffer *buffer, int buffer_siz
  * careful about buffer type and rules for reading into buffers
  * if theres no operation avaiable put op->id = -1.
  */
-void read_main_client_buffer(struct rnd_access_buffer *buffer, int client_id, int buffer_size, struct operation *op)
+void read_main_client_buffer(struct rnd_access_buffer *buffer, int client_id, int buffer_size, struct operation *op) //NO SEMS??
 {
     int found = 0;
     int *p = buffer->ptrs;
@@ -184,7 +183,7 @@ void read_client_interm_buffer(struct circular_buffer *buffer, int buffer_size, 
     if (in == out){
         // printf("it empty\n");
         op->id = -1;
-    }else{
+    }else{ //how do i circular buffer
             *op = *(ops + out);
             p->out = (out + 1) % buffer_size;
     }

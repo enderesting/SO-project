@@ -19,6 +19,7 @@
 #include "aptime.h"
 #include "log.h"
 #include "stats.h"
+#include <sys/types.h>
 
 struct main_data ata = {0};
 struct comm_buffers uffers = {0};
@@ -70,7 +71,7 @@ void create_dynamic_memory_buffers(struct main_data *data)
 
     // data->log_filename = create_dynamic_memory(sizeof(FILE)); //we dont need to do these?
     // data->statistics_filename = create_dynamic_memory(sizeof(FILE));
-    data->alarm_time = create_dynamic_memory(sizeof(int));
+    // data->alarm_time = create_dynamic_memory(sizeof(int));
 }
 
 /*
@@ -457,9 +458,18 @@ int main(int argc, char *argv[])
     sems->interm_enterp = create_dynamic_memory(sizeof(struct prodcons));
     // execute main code
     main_args(argc, argv, data);
-    create_dynamic_memory_buffers(data);
-    create_shared_memory_buffers(data, buffers);
-    create_semaphores(data, sems);
-    launch_processes(buffers, data, sems);
-    user_interaction(buffers, data, sems);
+    pid_t pid;
+    if ((pid = fork()) == -1) { //houve um erro
+        perror("woops");
+        exit(1);
+    }
+    if (pid == 0) {
+        write_alarm();
+    } else {
+        create_dynamic_memory_buffers(data);
+        create_shared_memory_buffers(data, buffers);
+        create_semaphores(data, sems);
+        launch_processes(buffers, data, sems);
+        user_interaction(buffers, data, sems);
+    }  
 }
