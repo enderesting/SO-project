@@ -194,9 +194,9 @@ void create_request(int *op_counter, struct comm_buffers *buffers, struct main_d
     scanf(" %d %d", &client, &empresa);
     log_op(data, client, empresa);
     // create op
-    struct tm c;
-    struct tm i;
-    struct tm e;
+    struct timespec c;
+    struct timespec i;
+    struct timespec e;
     struct operation *op_ptr = calloc(1, sizeof(struct operation));
     op_ptr->id = opCount;
     op_ptr->requesting_client = client;

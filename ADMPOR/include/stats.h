@@ -3,3 +3,5 @@
 #include "main.h"
 
 void write_stats(struct main_data* data, struct operation* op);
+
+char* toStringStats(struct timespec time);

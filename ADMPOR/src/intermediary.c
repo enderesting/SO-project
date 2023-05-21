@@ -90,7 +90,6 @@ void intermediary_process_operation(struct operation *op, int interm_id, struct 
     // printf("                                        Here:%c\n", (data->results[op->id]).status);
     semaphore_mutex_unlock(sems->results_mutex);
     // printf("                                        Processing: Interm DONE!\n");
-    counter[interm_id]++;
 }
 
 /*

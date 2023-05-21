@@ -18,7 +18,7 @@ void log_op(struct main_data *data, int client, int enterp) {
     time_1 = localtime(&actual_time);
     char* help = tmToString(*time_1);
     strcat(string, help);
-    strcat(string, "op ");
+    strcat(string, " op ");
     char* string_c;
     char s_c[50] = {};
     string_c = s_c;
@@ -47,7 +47,7 @@ void log_status(struct main_data *data, int num) {
     time_1 = localtime(&actual_time);
     char* help = tmToString(*time_1);
     strcat(string, help);
-    strcat(string, "status ");
+    strcat(string, " status ");
     char* string_num;
     char s_num[50] = {};
     string_num = s_num;
@@ -70,7 +70,7 @@ void log_help(struct main_data *data) {
     time_1 = localtime(&actual_time);
     char* help = tmToString(*time_1);
     strcat(string, help);
-    strcat(string, "help\n");
+    strcat(string, " help\n");
 
     fprintf(data->log_filename, "%s", string);
 }
@@ -88,7 +88,7 @@ void log_stop(struct main_data *data) {
     time_1 = localtime(&actual_time);
     char* stop =  tmToString(*time_1);
     strcat(string, stop);
-    strcat(string, "stop\n");
+    strcat(string, " stop\n");
 
     fprintf(data->log_filename, "%s", string);
 }
@@ -145,7 +145,7 @@ char *tmToString(struct tm time) {
     strcat(result, hour_str);
     sprintf(min_str, "%d:", min);
     strcat(result, min_str);
-    sprintf(sec_str, "%d ", sec);
+    sprintf(sec_str, "%d", sec);
     strcat(result, sec_str);
 
     return result;

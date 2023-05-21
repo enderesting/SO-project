@@ -95,7 +95,6 @@ void client_process_operation(struct operation* op, int client_id, struct main_d
     // printf("                                        Here:%c\n", (data->results[op->id]).status);
     semaphore_mutex_unlock(sems->results_mutex);
     // printf("                                        Processing: Client DONE!\n");
-    counter[client_id]++;
 }
 
 /*
