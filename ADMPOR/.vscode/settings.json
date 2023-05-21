@@ -1,5 +1,6 @@
 {
     "files.associations": {
-        "synchronization.h": "c"
+        "synchronization.h": "c",
+        "synchronization-private.h": "c"
     }
 }

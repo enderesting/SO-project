@@ -149,8 +149,6 @@ void write_interm_enterp_buffer(struct rnd_access_buffer *buffer, int buffer_siz
  */
 void read_main_client_buffer(struct rnd_access_buffer *buffer, int client_id, int buffer_size, struct operation *op)
 {
-    // read_rnd_access_buffer(buffer, client_id, buffer_size, op);
-        // read_rnd_access_buffer(buffer, enterp_id, buffer_size, op);
     int found = 0;
     int *p = buffer->ptrs;
     struct operation *ops = buffer->buffer;
@@ -158,8 +156,8 @@ void read_main_client_buffer(struct rnd_access_buffer *buffer, int client_id, in
     {
         if (p[i] == 1 && ops[i].requesting_client == client_id)
         {
-            *op = ops[i]; 
-            p[i] = 0;
+            *op = ops[i]; //just reading --> this one's fine on its own
+            p[i] = 0; //changing the buffer --> needs to be locked
             found = 1;
             break;
         }

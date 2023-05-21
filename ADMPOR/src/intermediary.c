@@ -9,6 +9,7 @@
 #include "main.h"
 #include "intermediary.h"
 #include "synchronization.h"
+#include <synchronization-private.h>
 #include <unistd.h>
 #include <stdlib.h>
 
@@ -54,11 +55,11 @@ int execute_intermediary(int interm_id, struct comm_buffers *buffers, struct mai
 void intermediary_receive_operation(struct operation *op, struct comm_buffers *buffers, struct main_data *data, struct semaphores* sems)
 {
     if (*(data->terminate) != 1){
+        printf("Reading: Client-Interm\n");
         consume_begin(sems->client_interm);
-        // printf("Reading: Client-Interm\n");
         read_client_interm_buffer(buffers->client_interm, data->buffers_size, op);
         consume_end(sems->client_interm);
-        // printf("Reading: Client-Interm DONE!\n");
+        printf("Reading: Client-Interm DONE!\n");
     }
 }
 
@@ -74,10 +75,10 @@ void intermediary_process_operation(struct operation *op, int interm_id, struct 
     op->status = 'I';
     // printf("Processing: Interm begin");
     semaphore_mutex_lock(sems->results_mutex);
-    printf("Processing: Interm in process\n");
+    printf("                                        Processing: Interm in process\n");
     data->results[op->id] = *op;
     semaphore_mutex_unlock(sems->results_mutex);
-    // printf("Processing: Interm DONE!");
+    printf("                                        Processing: Interm DONE!\n");
     counter[interm_id]++;
 }
 
@@ -86,9 +87,10 @@ void intermediary_process_operation(struct operation *op, int interm_id, struct 
  */
 void intermediary_send_answer(struct operation *op, struct comm_buffers *buffers, struct main_data *data, struct semaphores* sems)
 {
+    printf("Writing: Interm-Enterp, pid: %d\n",getpid());
     produce_begin(sems->interm_enterp);
-    // printf("Writing: Interm-Enterp\n");
+    printf("Writing: Interm-Enterp writing atm, pid: %d\n",getpid());
     write_interm_enterp_buffer(buffers->interm_enterp, data->buffers_size, op);
     produce_end(sems->interm_enterp);
-    // printf("Writing: Interm-Enterp DONE!\n");
+    printf("Writing: Interm-Enterp DONE! pid: %d\n",getpid());
 }

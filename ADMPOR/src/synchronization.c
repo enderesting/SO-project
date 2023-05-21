@@ -2,6 +2,7 @@
 #include <semaphore.h>
 #include <fcntl.h> 
 #include <synchronization.h>
+#include <synchronization-private.h>
 #include <errno.h>
 
 #include <unistd.h>
@@ -56,7 +57,7 @@ void semaphore_destroy(char* name, sem_t* semaphore){
 * corretos da estrutura passada em argumento.
 */
 void produce_begin(struct prodcons* pc){
-    // printf("produce begin -> ");
+    printf("produce begin -> ");
     semaphore_mutex_lock(pc->empty); // why does it get stuck in here????? empty should have value in ittt. :()
     semaphore_mutex_lock(pc->mutex);
     // printf("\n");
@@ -66,9 +67,9 @@ void produce_begin(struct prodcons* pc){
 * corretos da estrutura passada em argumento.
 */
 void produce_end(struct prodcons* pc){
-    // printf("produce end -> ");
     semaphore_mutex_unlock(pc->mutex);
     semaphore_mutex_unlock(pc->full);
+    printf("produce end.\n");
     // printf("\n");
 }
 
@@ -76,7 +77,7 @@ void produce_end(struct prodcons* pc){
 * corretos da estrutura passada em argumento.
 */
 void consume_begin(struct prodcons* pc){
-    // printf("consume begin -> ");
+    printf("consume begin -> ");
     semaphore_mutex_lock(pc->full);
     semaphore_mutex_lock(pc->mutex);
     // printf("\n");
@@ -86,10 +87,19 @@ void consume_begin(struct prodcons* pc){
 * corretos da estrutura passada em argumento.
 */
 void consume_end(struct prodcons* pc){
-    // printf("consume end -> ");
     semaphore_mutex_unlock(pc->mutex);
     semaphore_mutex_unlock(pc->empty);
+    
+    printf("consume end. \n");
     // printf("\n");
+}
+
+/*
+*  When consumer reads the buffer without changing any content, simply release.
+*/
+void consume_ignore(struct prodcons* pc){
+    semaphore_mutex_unlock(pc->mutex);
+    semaphore_mutex_unlock(pc->full);
 }
 
 /* Função que faz wait a um semáforo.
@@ -97,8 +107,11 @@ void consume_end(struct prodcons* pc){
 void semaphore_mutex_lock(sem_t* sem){
     // printf("locking sem ");
     // int v;
-    // printf("sem_wait: %d \n",sem_getvalue(sem,&v));
+    // sem_getvalue(sem,&v);
+    // printf("sem_wait: %d   pid: %d\n",v,getpid());
     sem_wait(sem);
+    // sem_getvalue(sem,&v);
+    // printf("sem_wait2: %d   pid: %d\n",v,getpid());
 }
 
 /* Função que faz post a um semáforo.
@@ -106,6 +119,9 @@ void semaphore_mutex_lock(sem_t* sem){
 void semaphore_mutex_unlock(sem_t* sem){
     // printf("unlocking sem ");
     // int v;
-    // printf("sem_post : %d \n",sem_getvalue(sem,&v));
+    // sem_getvalue(sem,&v);
+    // printf("sem_post: %d   pid: %d\n",v,getpid());
     sem_post(sem);
+    // sem_getvalue(sem,&v);
+    // printf("sem_post2: %d   pid: %d\n",v,getpid());
 }
