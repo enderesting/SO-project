@@ -183,7 +183,7 @@ void read_client_interm_buffer(struct circular_buffer *buffer, int buffer_size, 
     if (in == out){
         // printf("it empty\n");
         op->id = -1;
-    }else{ //how do i circular buffer
+    }else{
             *op = *(ops + out);
             p->out = (out + 1) % buffer_size;
     }

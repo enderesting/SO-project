@@ -59,16 +59,18 @@ int execute_enterprise(int enterp_id, struct comm_buffers* buffers, struct main_
 */
 void enterprise_receive_operation(struct operation* op, int enterp_id, struct comm_buffers* buffers, struct main_data* data, struct semaphores* sems){
     if (*(data->terminate) != 1){
-        printf("Reading: Interm-Enterp, pid: %d\n",getpid());
+        // printf("Reading: Interm-Enterp, pid: %d\n",getpid());
         consume_begin(sems->interm_enterp);
         read_interm_enterp_buffer(buffers->interm_enterp, enterp_id, data->buffers_size, op);
         if (op->id == -1) //didnt actually consume
         {
             consume_ignore(sems->interm_enterp);
+            sleep(1);
         }else{
             consume_end(sems->interm_enterp);
+            printf("Empresa %d recebeu pedido!\n",enterp_id);
         }
-        printf("Reading: Interm-Enterp DONE! pid: %d\n",getpid());
+        // printf("Reading: Interm-Enterp DONE! pid: %d\n",getpid());
     }
 }
 
@@ -91,8 +93,9 @@ void enterprise_process_operation(struct operation* op, int enterp_id, struct ma
     op->receiving_enterp = enterp_id;
     // printf("Processing: Enterprise begin");
     semaphore_mutex_lock(sems->results_mutex);
-    printf("                                        Processing: Enterprise in process\n");
+    // printf("                                        Processing: Enterprise in process %d\n", op->id);
     data->results[op->id] = *op;
+    // printf("                                        Here:%c\n", (data->results[op->id]).status);
     semaphore_mutex_unlock(sems->results_mutex);
-    printf("                                        Processing: Enterprise DONE!\n");
+    // printf("                                        Processing: Enterprise DONE!\n");
 }

@@ -60,19 +60,19 @@ int execute_client(int client_id, struct comm_buffers* buffers, struct main_data
 void client_get_operation(struct operation* op, int client_id, struct comm_buffers* buffers, struct main_data* data, struct semaphores* sems){
 
     if (*(data->terminate) != 1){
-        printf("Reading: Main-Client %d, pid: %d \n",client_id, getpid());
-        //?????? it doesnt go any further???
+        // printf("Reading: Main-Client %d, pid: %d \n",client_id, getpid());
         consume_begin(sems->main_client);
-        printf("Reading: Main-Client %d reading atm, pid: %d \n",client_id, getpid());
+        // printf("Reading: Main-Client %d reading atm, pid: %d \n",client_id, getpid());
         read_main_client_buffer(buffers->main_client, client_id, data->buffers_size, op);
         if (op->id == -1) //didnt actually consume
         {
             consume_ignore(sems->main_client);
+            sleep(1);
         }else{
             consume_end(sems->main_client);
+            printf("Cliente %d recebeu pedido!\n",client_id);
         }
-        sleep(1);
-        printf("Reading: Main-Client %d DONE! pid: %d \n",client_id, getpid());
+        // printf("Reading: Main-Client %d DONE! pid: %d \n",client_id, getpid());
     }
 }
 
@@ -89,12 +89,12 @@ void client_process_operation(struct operation* op, int client_id, struct main_d
     op->client_time = get_time(); 
     counter[client_id]++;
     //printf("client_stats in client after ++: %d\n", data->client_stats[client_id]);
-    // printf("Processing: Client begin");
     semaphore_mutex_lock(sems->results_mutex); //stuck here?
-    printf("                                        Processing: Client in process\n");
+    // printf("                                        Processing: Client in process %d\n", op->id);
     data->results[op->id] = *op; // <-- i wonder if we should change each stat individually instead
+    // printf("                                        Here:%c\n", (data->results[op->id]).status);
     semaphore_mutex_unlock(sems->results_mutex);
-    printf("                                        Processing: Client DONE!\n");
+    // printf("                                        Processing: Client DONE!\n");
     counter[client_id]++;
 }
 
@@ -102,9 +102,9 @@ void client_process_operation(struct operation* op, int client_id, struct main_d
 * func that writes an operation in buffer mem shared between clients and intermed.
 */
 void client_send_operation(struct operation* op, struct comm_buffers* buffers, struct main_data* data, struct semaphores* sems){
-    printf("Writing: Client%d-Interm \n",op->receiving_client);
+    // printf("Writing: Client%d-Interm \n",op->receiving_client);
     produce_begin(sems->client_interm);
     write_client_interm_buffer(buffers->client_interm, data->buffers_size, op);
     produce_end(sems->client_interm);
-    printf("Writing: Client%d-Interm DONE!\n",op->receiving_client);
+    // printf("Writing: Client%d-Interm DONE!\n",op->receiving_client);
 }

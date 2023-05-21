@@ -40,7 +40,8 @@ int execute_intermediary(int interm_id, struct comm_buffers *buffers, struct mai
                     if (op->id != -1){
                         // printf("found, process in interm \n"); // its in here somehow
                         intermediary_process_operation(op, interm_id, data, data->intermediary_stats, sems);
-                        intermediary_send_answer(op, buffers, data, sems);    
+                        intermediary_send_answer(op, buffers, data, sems);
+                        printf("Intermediário %d recebeu pedido!\n",interm_id);
                     }
                     free(op);
         }
@@ -56,11 +57,17 @@ int execute_intermediary(int interm_id, struct comm_buffers *buffers, struct mai
 void intermediary_receive_operation(struct operation *op, struct comm_buffers *buffers, struct main_data *data, struct semaphores* sems)
 {
     if (*(data->terminate) != 1){
-        printf("Reading: Client-Interm\n");
+        // printf("Reading: Client-Interm\n");
         consume_begin(sems->client_interm);
         read_client_interm_buffer(buffers->client_interm, data->buffers_size, op);
-        consume_end(sems->client_interm);
-        printf("Reading: Client-Interm DONE!\n");
+        if (op->id == -1) //didnt actually consume
+        {
+            consume_ignore(sems->client_interm);
+            sleep(1);
+        }else{
+            consume_end(sems->client_interm);
+        }
+        // printf("Reading: Client-Interm DONE!\n");
     }
 }
 
@@ -78,10 +85,11 @@ void intermediary_process_operation(struct operation *op, int interm_id, struct 
     counter[interm_id]++;
     // printf("Processing: Interm begin");
     semaphore_mutex_lock(sems->results_mutex);
-    printf("                                        Processing: Interm in process\n");
-    data->results[op->id] = *op;
+    // printf("                                        Processing: Interm in process %d\n", op->id);
+    data->results[op->id] = *op; // <-- i wonder if we should change each stat individually instead
+    // printf("                                        Here:%c\n", (data->results[op->id]).status);
     semaphore_mutex_unlock(sems->results_mutex);
-    printf("                                        Processing: Interm DONE!\n");
+    // printf("                                        Processing: Interm DONE!\n");
     counter[interm_id]++;
 }
 
@@ -90,10 +98,10 @@ void intermediary_process_operation(struct operation *op, int interm_id, struct 
  */
 void intermediary_send_answer(struct operation *op, struct comm_buffers *buffers, struct main_data *data, struct semaphores* sems)
 {
-    printf("Writing: Interm-Enterp, pid: %d\n",getpid());
+    // printf("Writing: Interm-Enterp, pid: %d\n",getpid());
     produce_begin(sems->interm_enterp);
-    printf("Writing: Interm-Enterp writing atm, pid: %d\n",getpid());
+    // printf("Writing: Interm-Enterp writing atm, pid: %d\n",getpid());
     write_interm_enterp_buffer(buffers->interm_enterp, data->buffers_size, op);
     produce_end(sems->interm_enterp);
-    printf("Writing: Interm-Enterp DONE! pid: %d\n",getpid());
+    // printf("Writing: Interm-Enterp DONE! pid: %d\n",getpid());
 }

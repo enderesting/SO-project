@@ -193,39 +193,32 @@ void create_request(int *op_counter, struct comm_buffers *buffers, struct main_d
     int client, empresa;
     scanf(" %d %d", &client, &empresa);
     log_op(data, client, empresa);
-    if (opCount < (data->max_ops))
-    {
-        // create op
-        struct tm c;
-        struct tm i;
-        struct tm e;
-        struct operation *op_ptr = calloc(1, sizeof(struct operation));
-        op_ptr->id = opCount;
-        op_ptr->requesting_client = client;
-        op_ptr->requested_enterp = empresa;
-        op_ptr->status = 'M';
-        op_ptr->receiving_client = -1;
-        op_ptr->receiving_interm = -1;
-        op_ptr->receiving_enterp = -1;
-        op_ptr->start_time = get_time();
-        op_ptr->client_time = c;
-        op_ptr->intermed_time = i;
-        op_ptr->enterp_time = e;
+    // create op
+    struct tm c;
+    struct tm i;
+    struct tm e;
+    struct operation *op_ptr = calloc(1, sizeof(struct operation));
+    op_ptr->id = opCount;
+    op_ptr->requesting_client = client;
+    op_ptr->requested_enterp = empresa;
+    op_ptr->status = 'M';
+    op_ptr->receiving_client = -1;
+    op_ptr->receiving_interm = -1;
+    op_ptr->receiving_enterp = -1;
+    op_ptr->start_time = get_time();
+    op_ptr->client_time = c;
+    op_ptr->intermed_time = i;
+    op_ptr->enterp_time = e;
 
-        // write in main-client buffer
-        produce_begin(sems->main_client);
-        write_main_client_buffer(buffers->main_client, data->buffers_size, op_ptr); // happens right after here
-        produce_end(sems->main_client);
-        printf("O pedido #%d foi criado!\n", opCount);
-        *op_counter = opCount + 1;
-        // op_counter_pointer
-        free(op_ptr);
-    }
-    else
-    {
-        printf("O número máximo dee operação já foi atingido.\n");
-        stop_execution(data, buffers, sems);
-    }
+    // write in main-client buffer
+    produce_begin(sems->main_client);
+    data->results[opCount] = *op_ptr;
+    write_main_client_buffer(buffers->main_client, data->buffers_size, op_ptr); // happens right after here
+    produce_end(sems->main_client);
+    printf("O pedido #%d foi criado!\n", opCount);
+    *op_counter = opCount + 1;
+    // op_counter_pointer
+    free(op_ptr);
 }
 
 /*
@@ -240,6 +233,7 @@ void read_status(struct main_data *data, struct semaphores *sems)
     scanf("%d", &id);
     log_status(data, id);
     
+    
     semaphore_mutex_lock(sems->results_mutex);
     struct operation* op = &(data->results[id]);
     semaphore_mutex_unlock(sems->results_mutex);
@@ -249,14 +243,18 @@ void read_status(struct main_data *data, struct semaphores *sems)
         // printf("%d\n", data->results[id].receiving_client);
         printf("Pedido %d ainda não é válido\n", id);
     }
-    else if (0 <= id && id < (data->max_ops))
+    else if (0 <= id && id < MAX_RESULTS)
     {
-        for (int i = 0; i < data->max_ops; i++)
+        for (int i = 0; i < MAX_RESULTS; i++)
         {
-            if (op->id == id)
+            if (op->id == i)
             {
-
-                if (data->results->status == 'C')
+                if (data->results[i].status == 'M')
+                {
+                    printf("Pedido %d com estado %c requisitado pelo cliente %d à empresa %d!\n",
+                           id, data->results[i].status, data->results[i].requesting_client, data->results[i].requested_enterp);
+                }
+                else if (data->results[i].status == 'C')
                 {
                     printf("Pedido %d com estado %c requisitado pelo cliente %d à empresa %d, foi recebido pelo cliente %d!\n",
                            id, data->results[i].status, data->results[i].requesting_client, data->results[i].requested_enterp,
@@ -268,7 +266,7 @@ void read_status(struct main_data *data, struct semaphores *sems)
                            id, data->results[i].status, data->results[i].requesting_client, data->results[i].requested_enterp,
                            data->results[i].receiving_client, data->results[i].receiving_interm);
                 }
-                else if (data->results->status == 'E')
+                else if (data->results[i].status == 'E' || data->results[i].status == 'A')
                 {
                     printf("Pedido %d com estado %c requisitado pelo cliente %d à empresa %d, foi recebido pelo cliente %d, pelo intermediário %d e pela empresa %d!\n",
                            id, data->results[i].status, data->results[i].requesting_client, data->results[i].requested_enterp,

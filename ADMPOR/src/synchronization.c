@@ -57,7 +57,7 @@ void semaphore_destroy(char* name, sem_t* semaphore){
 * corretos da estrutura passada em argumento.
 */
 void produce_begin(struct prodcons* pc){
-    printf("produce begin -> ");
+    // printf("produce begin -> ");
     semaphore_mutex_lock(pc->empty); // why does it get stuck in here????? empty should have value in ittt. :()
     semaphore_mutex_lock(pc->mutex);
     // printf("\n");
@@ -69,7 +69,7 @@ void produce_begin(struct prodcons* pc){
 void produce_end(struct prodcons* pc){
     semaphore_mutex_unlock(pc->mutex);
     semaphore_mutex_unlock(pc->full);
-    printf("produce end.\n");
+    // printf("produce end.\n");
     // printf("\n");
 }
 
@@ -77,7 +77,7 @@ void produce_end(struct prodcons* pc){
 * corretos da estrutura passada em argumento.
 */
 void consume_begin(struct prodcons* pc){
-    printf("consume begin -> ");
+    // printf("consume begin -> ");
     semaphore_mutex_lock(pc->full);
     semaphore_mutex_lock(pc->mutex);
     // printf("\n");
@@ -90,7 +90,7 @@ void consume_end(struct prodcons* pc){
     semaphore_mutex_unlock(pc->mutex);
     semaphore_mutex_unlock(pc->empty);
     
-    printf("consume end. \n");
+    // printf("consume end. \n");
     // printf("\n");
 }
 
