@@ -74,7 +74,7 @@ void intermediary_process_operation(struct operation *op, int interm_id, struct 
     op->status = 'I';
     // printf("Processing: Interm begin");
     semaphore_mutex_lock(sems->results_mutex);
-    // printf("Processing: Interm in process");
+    printf("Processing: Interm in process\n");
     data->results[op->id] = *op;
     semaphore_mutex_unlock(sems->results_mutex);
     // printf("Processing: Interm DONE!");

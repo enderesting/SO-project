@@ -60,6 +60,7 @@ void main_args(int argc, char *argv[], struct main_data *data)
 void create_dynamic_memory_buffers(struct main_data *data)
 {
     int intSize = sizeof(int);
+    data->parent_pid = create_dynamic_memory(intSize);
     data->client_pids = create_dynamic_memory((data->n_clients) * intSize);
     data->intermediary_pids = create_dynamic_memory((data->n_intermediaries) * intSize);
     data->enterprise_pids = create_dynamic_memory((data->n_enterprises) * intSize);
@@ -105,6 +106,8 @@ void create_shared_memory_buffers(struct main_data *data, struct comm_buffers *b
  */
 void launch_processes(struct comm_buffers *buffers, struct main_data *data, struct semaphores *sems)
 {
+    int pid = getpid();
+    *data->parent_pid = pid;
     for (int i = 0; i < (data->n_clients); i++)
     {
         int pid = launch_client(i, buffers, data, sems);
@@ -356,13 +359,14 @@ void destroy_memory_buffers(struct main_data *data, struct comm_buffers *buffers
     destroy_shared_memory(STR_SHM_TERMINATE, data->terminate, intSize);
 
     // destroying dynamic memory
+    destroy_dynamic_memory(data->parent_pid);
     destroy_dynamic_memory(data->client_pids);
     destroy_dynamic_memory(data->intermediary_pids);
     destroy_dynamic_memory(data->enterprise_pids);
     destroy_dynamic_memory(data->client_stats);
     destroy_dynamic_memory(data->intermediary_stats);
     destroy_dynamic_memory(data->enterprise_stats);
-    printf("finished the massacre");
+    // printf("finished the massacre");
 }
 
 void create_semaphores(struct main_data *data, struct semaphores *sems)
@@ -437,14 +441,14 @@ int main(int argc, char *argv[])
         return 1;
     }
     // init data structures
-    struct main_data *data = create_dynamic_memory(sizeof(struct main_data));
+    data = create_dynamic_memory(sizeof(struct main_data));
     // init buffer structures
-    struct comm_buffers *buffers = create_dynamic_memory(sizeof(struct comm_buffers));
+    buffers = create_dynamic_memory(sizeof(struct comm_buffers));
     buffers->main_client = create_dynamic_memory(sizeof(struct rnd_access_buffer));
     buffers->client_interm = create_dynamic_memory(sizeof(struct circular_buffer));
     buffers->interm_enterp = create_dynamic_memory(sizeof(struct rnd_access_buffer));
     // init semaphore data structure
-    struct semaphores *sems = create_dynamic_memory(sizeof(struct semaphores));
+    sems = create_dynamic_memory(sizeof(struct semaphores));
     sems->main_client = create_dynamic_memory(sizeof(struct prodcons));
     sems->client_interm = create_dynamic_memory(sizeof(struct prodcons));
     sems->interm_enterp = create_dynamic_memory(sizeof(struct prodcons));

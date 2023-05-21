@@ -34,8 +34,6 @@ int launch_client(int client_id, struct comm_buffers *buffers, struct main_data 
     }
     if (pid == 0)
     {
-        // printf("yooo here comes the child");
-        // sleep(30);
         int value = execute_client(client_id, buffers, data, sems);
         exit(value);
     }

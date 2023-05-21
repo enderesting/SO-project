@@ -9,6 +9,14 @@
 #include <string.h>
 #include <ctype.h>
 
+// extern struct main_data ata;
+// extern struct comm_buffers uffers;
+// extern struct semaphores ems;
+
+extern struct main_data *data;
+extern struct comm_buffers *buffers;
+extern struct semaphores *sems;
+
 
 
 //Estrutura que agrega a informação necessária pela main do AdmPor.
@@ -20,6 +28,7 @@ struct main_data {
 	int n_intermediaries;	//número de intermediários
 	int n_enterprises;		//número de empresas
 	
+	int *parent_pid;
 	int *client_pids;			//process ids de clientes
 	int *intermediary_pids;		//process ids de intermediários
 	int *enterprise_pids;		//process ids de empresas

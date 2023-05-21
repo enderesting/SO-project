@@ -77,7 +77,7 @@ void client_process_operation(struct operation* op, int client_id, struct main_d
     op->status = 'C';
     // printf("Processing: Client begin");
     semaphore_mutex_lock(sems->results_mutex); //stuck here?
-    // printf("Processing: Client in process");
+    printf("Processing: Client in process\n");
     data->results[op->id] = *op; // <-- i wonder if we should change each stat individually instead
     semaphore_mutex_unlock(sems->results_mutex);
     // printf("Processing: Client DONE!");

@@ -2,14 +2,11 @@
 #include "apsignal.h"
 #include "main.h"
 
-extern struct main_data *data;
-extern struct comm_buffers *buffers;
-extern struct semaphores *sems;
 
-void handler(int signum)
+void handler()
 {
-    if (signum == SIGINT){
-        printf("hiahaihaihi");
+    pid_t pid = getpid(); 
+    if(pid == *data->parent_pid){//only execute stop_execution for main process
         stop_execution(data, buffers, sems);
     }
 }
